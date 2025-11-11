@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using SeatingHelper.Model;
 using System.Formats.Tar;
 using System.Text;
 using System.Windows;
@@ -19,6 +20,8 @@ namespace SeatingHelper
     /// </summary>
     public partial class MainWindow : Window
     {
+        private List<string> players = new List<string>();
+        private List<Piece> importedPieces = new List<Piece>();
         public MainWindow()
         {
             InitializeComponent();
@@ -47,6 +50,7 @@ namespace SeatingHelper
                 // You can now use 'selectedFileName' to open and process the file
                 MessageBox.Show($"Selected file: {selectedFileName}");
                 filenameDisplay.Text = selectedFileName;
+                PopulateMockData();
                 CountPlayers(selectedFileName);
             }
             else
@@ -64,8 +68,56 @@ namespace SeatingHelper
 
             //numPlayers.Text = (excelRange.Rows.Count - 1).ToString();
 
-            var rows = 21;
-            numPlayers.Text = (rows - 1).ToString();
+            numPlayers.Text = players.Count.ToString();
+        }
+
+        private void PopulateMockData()
+        {
+            Piece piece1 = new Piece() { Name = "Piece 1" };
+            piece1.Assignments.Add(new Assignment("Player 1", "1"));
+            piece1.Assignments.Add(new Assignment("Player 2", "3"));
+            piece1.Assignments.Add(new Assignment("Player 3", "5"));
+            piece1.Assignments.Add(new Assignment("Player 4", "1"));
+            piece1.Assignments.Add(new Assignment("Player 5", "2"));
+            piece1.Assignments.Add(new Assignment("Player 6", "3"));
+            piece1.Assignments.Add(new Assignment("Player 7", "4"));
+            piece1.Assignments.Add(new Assignment("Player 8", "1"));
+            piece1.Assignments.Add(new Assignment("Player 9", "3"));
+            piece1.Assignments.Add(new Assignment("Player 10", "2"));
+            piece1.Assignments.Add(new Assignment("Player 11", "4"));
+            piece1.Assignments.Add(new Assignment("Player 12", "1"));
+            piece1.Assignments.Add(new Assignment("Player 13", "3"));
+            piece1.Assignments.Add(new Assignment("Player 14", "5"));
+            piece1.Assignments.Add(new Assignment("Player 15", "5"));
+            piece1.Assignments.Add(new Assignment("Player 16", "2"));
+            piece1.Assignments.Add(new Assignment("Player 17", "4"));
+            piece1.Assignments.Add(new Assignment("Player 18", "5"));
+            piece1.Assignments.Add(new Assignment("Player 19", "2"));
+            piece1.Assignments.Add(new Assignment("Player 20", "4"));
+            Piece piece2 = new Piece() { Name = "Piece 2" };
+            piece2.Assignments.Add(new Assignment("Player 1", "7"));
+            piece2.Assignments.Add(new Assignment("Player 2", "4"));
+            piece2.Assignments.Add(new Assignment("Player 3", "1"));
+            piece2.Assignments.Add(new Assignment("Player 4", "6"));
+            piece2.Assignments.Add(new Assignment("Player 5", "4"));
+            piece2.Assignments.Add(new Assignment("Player 6", "1"));
+            piece2.Assignments.Add(new Assignment("Player 7", "7"));
+            piece2.Assignments.Add(new Assignment("Player 8", "6"));
+            piece2.Assignments.Add(new Assignment("Player 9", "1"));
+            piece2.Assignments.Add(new Assignment("Player 10", "3"));
+            piece2.Assignments.Add(new Assignment("Player 11", "4"));
+            piece2.Assignments.Add(new Assignment("Player 12", "2"));
+            piece2.Assignments.Add(new Assignment("Player 13", "5"));
+            piece2.Assignments.Add(new Assignment("Player 14", "2"));
+            piece2.Assignments.Add(new Assignment("Player 15", "3"));
+            piece2.Assignments.Add(new Assignment("Player 16", "2"));
+            piece2.Assignments.Add(new Assignment("Player 17", "5"));
+            piece2.Assignments.Add(new Assignment("Player 18", "8"));
+            piece2.Assignments.Add(new Assignment("Player 19", "3"));
+            piece2.Assignments.Add(new Assignment("Player 20", "8"));
+            players = piece1.Assignments.Select(a => a.PlayerName).Distinct().ToList();
+            importedPieces.Add(piece1);
+            importedPieces.Add(piece2);
         }
     }
 }
