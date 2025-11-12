@@ -10,18 +10,26 @@
     <Grid>
         <TextBox HorizontalAlignment="Left" Margin="37,22,0,0" TextWrapping="NoWrap" Text="Filename" VerticalAlignment="Top" Width="300" Name="filenameDisplay"/>
         <Button Content="Choose File (.xls, .xlsx)" HorizontalAlignment="Left" Margin="37,45,0,0" VerticalAlignment="Top" Click="Button_Choose_File_Click"/>
-        <Label Content="# of players: " HorizontalAlignment="Left" Margin="182,42,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="259,46,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Name="numPlayers"/>
+        <Label Content="max # of players: " HorizontalAlignment="Left" Margin="163,42,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Margin="271,46,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="66" Name="numPlayers"/>
         <Label Content="# of rows: " HorizontalAlignment="Left" Margin="37,89,0,0" VerticalAlignment="Top"/>
         <xctk:IntegerUpDown Value="4" HorizontalAlignment="Left" Margin="115,92,0,0" VerticalAlignment="Top" Name="numRows" Minimum="1" Maximum="8" Increment="1" Width="40" Height="20" ValueChanged="numRows_ValueChanged" />
         <Label Content="Max row width: " HorizontalAlignment="Left" Margin="37,142,0,0" VerticalAlignment="Top" />
         <xctk:IntegerUpDown Value="12" HorizontalAlignment="Left" Margin="136,146,0,0" VerticalAlignment="Top" x:Name="maxRowWidth" Minimum="4" Maximum="15" Increment="1" Width="40" Height="20" />
-        <RadioButton Content="Parts must share row" HorizontalAlignment="Left" Margin="46,202,0,0" VerticalAlignment="Top"/>
-        <RadioButton Content="Parts can be in blocks" HorizontalAlignment="Left" Margin="193,202,0,0" VerticalAlignment="Top"/>
-        <CheckBox Content="" HorizontalAlignment="Left" Margin="46,241,0,0" VerticalAlignment="Top"/>
-        <Label Content="Make back " HorizontalAlignment="Left" Margin="62,236,0,0" VerticalAlignment="Top"/>
-        <xctk:IntegerUpDown Value="12" HorizontalAlignment="Left" Margin="133,240,0,0" VerticalAlignment="Top" x:Name="numStraightRows" Minimum="0" Maximum="8" Increment="1" Width="40" Height="20" />
-        <Label Content="rows straight" HorizontalAlignment="Left" Margin="183,236,0,0" VerticalAlignment="Top"/>
+        <RadioButton Content="Parts must share row" HorizontalAlignment="Left" Margin="46,202,0,0" VerticalAlignment="Top" IsEnabled="False" Opacity="0.5"/>
+        <RadioButton Content="Parts can be in blocks" HorizontalAlignment="Left" Margin="193,202,0,0" VerticalAlignment="Top" IsEnabled="False" Opacity="0.5"/>
+        <CheckBox Content="" HorizontalAlignment="Left" Margin="46,241,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+        <Label Content="Make back " HorizontalAlignment="Left" Margin="62,236,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+        <xctk:IntegerUpDown Value="12" HorizontalAlignment="Left" Margin="133,240,0,0" VerticalAlignment="Top" x:Name="numStraightRows" Minimum="0" Maximum="8" Increment="1" Width="40" Height="20" IsEnabled="False" />
+        <Label Content="rows straight" HorizontalAlignment="Left" Margin="183,236,0,0" VerticalAlignment="Top" IsEnabled="False"/>
         <Button Content="Generate charts!" HorizontalAlignment="Left" Margin="46,294,0,0" VerticalAlignment="Top"/>
+        <ListView x:Name="chartsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="383,0,0,0" SelectionChanged="ListView_SelectionChanged">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="60" Header="Rows" DisplayMemberBinding="{Binding Rows}"/>
+                    <GridViewColumn Width="60" Header="Players" DisplayMemberBinding="{Binding Players}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </Window>

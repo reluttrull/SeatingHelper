@@ -25,41 +25,45 @@ namespace SeatingHelper
         public MainWindow()
         {
             InitializeComponent();
+            PopulateMockData();
         }
 
         private void Button_Choose_File_Click(object sender, RoutedEventArgs e)
         {
-            // Create OpenFileDialog
             OpenFileDialog openFileDialog = new OpenFileDialog();
 
-            // Configure OpenFileDialog properties
             openFileDialog.Title = "Select a File";
             openFileDialog.Filter = "*.xls|*.xlsx";
             openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            openFileDialog.Multiselect = false; // Set to true to allow multiple file selection
+            openFileDialog.Multiselect = false; 
 
-            // Show the dialog and get the result
             bool? result = openFileDialog.ShowDialog();
 
-            // Process the dialog result
             if (result == true)
             {
-                // Get the selected file name
                 string selectedFileName = openFileDialog.FileName;
 
-                // You can now use 'selectedFileName' to open and process the file
-                MessageBox.Show($"Selected file: {selectedFileName}");
                 filenameDisplay.Text = selectedFileName;
-                PopulateMockData();
                 CountPlayers(selectedFileName);
-                bool success = SeatingCalculation.TrySimplePieceSeating(importedPieces[1], numRows.Value ?? 0, out Assignment[][] seating);
-                if (success) DisplayPieceSeating(seating);
+                chartsList.Items.Clear();
+                foreach (Piece piece in importedPieces)
+                {
+                    bool success = SeatingCalculation.TrySimplePieceSeating(piece, numRows.Value ?? 0, out Assignment[][] seating);
+                    if (success) PopulateListView(seating);
+                }
+                bool exampleSuccess = SeatingCalculation.TrySimplePieceSeating(importedPieces[1], numRows.Value ?? 0, out Assignment[][] displaySeatingExample);
+                if (exampleSuccess) DisplayPieceSeating(displaySeatingExample);
                 else MessageBox.Show($"Parts don't fit cleanly into {numRows.Value ?? 0} rows.");
             }
             else
             {
                 MessageBox.Show("File selection cancelled.");
             }
+        }
+
+        private void PopulateListView(Assignment[][] seating)
+        {
+            chartsList.Items.Add(new { Rows = seating.Length, Players = seating.LongLength, Chart = seating });
         }
 
         private void DisplayPieceSeating(Assignment[][] seating)
@@ -156,6 +160,11 @@ namespace SeatingHelper
                 maxRowWidth.Minimum = players.Count / numRows.Value;
                 if (maxRowWidth.Value < maxRowWidth.Minimum) maxRowWidth.Value = maxRowWidth.Minimum;
             }
+        }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

@@ -27,7 +27,6 @@ namespace SeatingHelper
         }
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = true; // Or return a specific enum value
             Close();
         }
     }
