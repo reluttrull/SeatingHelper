@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SeatingHelper.Model
 {
-    class Assignment
+    public class Assignment
     {
         public string PlayerName { get; set; } = string.Empty;
         public string PartName {  get; set; } = string.Empty;
