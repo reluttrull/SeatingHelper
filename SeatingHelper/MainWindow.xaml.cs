@@ -48,7 +48,7 @@ namespace SeatingHelper
                 chartsList.Items.Clear();
                 foreach (Piece piece in importedPieces)
                 {
-                    bool success = SeatingCalculation.TrySimplePieceSeating(piece, numRows.Value ?? 0, out Assignment[][] seating);
+                    bool success = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, out Assignment[][] seating);
                     if (success) PopulateListView(seating);
                 }
                 bool exampleSuccess = SeatingCalculation.TrySimplePieceSeating(importedPieces[1], numRows.Value ?? 0, out Assignment[][] displaySeatingExample);
