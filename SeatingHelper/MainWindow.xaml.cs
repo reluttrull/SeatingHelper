@@ -142,9 +142,13 @@ namespace SeatingHelper
             piece2.Assignments.Add(new Assignment("Player 22", "8"));
             piece2.Assignments.Add(new Assignment("Player 23", "3"));
             piece2.Assignments.Add(new Assignment("Player 24", "6"));
-            players = piece1.Assignments.Select(a => a.PlayerName).Distinct().ToList();
             importedPieces.Add(piece1);
             importedPieces.Add(piece2);
+            players = importedPieces
+                        .SelectMany(p => p.Assignments)
+                        .Select(a => a.PlayerName)
+                        .Distinct()
+                        .ToList();
             UpdateMaxRowWidth();
         }
 
