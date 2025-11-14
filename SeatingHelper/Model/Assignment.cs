@@ -13,7 +13,7 @@ namespace SeatingHelper.Model
             PlayerName = playerName;
             PartName = partName;
         }
-        public int CompareTo(Assignment other)
+        public int CompareTo(Assignment? other)
         {
             if (other == null) return 1;
             int partComparison = this.PartName.CompareTo(other.PartName);
