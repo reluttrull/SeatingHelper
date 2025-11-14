@@ -50,6 +50,7 @@ namespace SeatingHelper
                 {
                     bool success = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, out Assignment[][] seating);
                     if (success) PopulateListView(seating);
+                    bool blockSuccess = SeatingCalculation.TryBlockPieceSeating(importedPieces[0], numRows.Value ?? 0, maxRowWidth.Value ?? 0, out seating);
                 }
                 bool exampleSuccess = SeatingCalculation.TrySimplePieceSeating(importedPieces[1], numRows.Value ?? 0, out Assignment[][] displaySeatingExample);
                 if (exampleSuccess) DisplayPieceSeating(displaySeatingExample);
