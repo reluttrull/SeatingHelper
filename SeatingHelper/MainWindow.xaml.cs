@@ -22,6 +22,7 @@ namespace SeatingHelper
     {
         private List<string> players = new List<string>();
         private List<Piece> importedPieces = new List<Piece>();
+        private List<Assignment[][]> seatingCharts = new List<Assignment[][]>();
         public MainWindow()
         {
             InitializeComponent();
@@ -48,9 +49,9 @@ namespace SeatingHelper
                 chartsList.Items.Clear();
                 foreach (Piece piece in importedPieces)
                 {
-                    bool success = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, out Assignment[][] seating);
-                    if (success) PopulateListView(seating);
-                    bool blockSuccess = SeatingCalculation.TryBlockPieceSeating(importedPieces[0], numRows.Value ?? 0, maxRowWidth.Value ?? 0, out seating);
+                    //bool success = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, out Assignment[][] seating);
+                    bool blockSuccess = SeatingCalculation.TryBlockPieceSeating(importedPieces[0], numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] seating); 
+                    if (blockSuccess) PopulateListView(seating);
                 }
                 bool exampleSuccess = SeatingCalculation.TrySimplePieceSeating(importedPieces[1], numRows.Value ?? 0, out Assignment[][] displaySeatingExample);
                 if (exampleSuccess) DisplayPieceSeating(displaySeatingExample);
@@ -64,7 +65,7 @@ namespace SeatingHelper
 
         private void PopulateListView(Assignment[][] seating)
         {
-            chartsList.Items.Add(new { Rows = seating.Length, Players = seating.LongLength, Chart = seating });
+            chartsList.Items.Add(new ChartListViewItem(seating));
         }
 
         private void DisplayPieceSeating(Assignment[][] seating)
@@ -167,9 +168,17 @@ namespace SeatingHelper
             }
         }
 
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ListViewItem_DoubleClick(object sender, RoutedEventArgs e)
         {
-
+            ListViewItem item = sender as ListViewItem;
+            if (item != null && item.IsSelected)
+            {
+                ChartListViewItem chartItem = item.Content as ChartListViewItem;
+                if (chartItem?.Chart != null)
+                {
+                    DisplayPieceSeating(chartItem.Chart);
+                }
+            }
         }
     }
 }
