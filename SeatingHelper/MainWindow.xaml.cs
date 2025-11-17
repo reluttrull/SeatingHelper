@@ -42,21 +42,7 @@ namespace SeatingHelper
 
             if (result == true)
             {
-                string selectedFileName = openFileDialog.FileName;
-
-                filenameDisplay.Text = selectedFileName;
-                CountPlayers(selectedFileName);
-                chartsList.Items.Clear();
-
-                foreach (Piece piece in importedPieces)
-                {
-                    //bool success = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, out Assignment[][] seating);
-                    bool blockSuccess = SeatingCalculation.TryBlockPieceSeating(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] seating); 
-                    if (blockSuccess) PopulateListView(seating);
-                }
-                //bool exampleSuccess = SeatingCalculation.TrySimplePieceSeating(importedPieces[1], numRows.Value ?? 0, out Assignment[][] displaySeatingExample);
-                //if (exampleSuccess) DisplayPieceSeating(displaySeatingExample);
-                //else MessageBox.Show($"Parts don't fit cleanly into {numRows.Value ?? 0} rows.");
+                // eventually parse file
             }
             else
             {
@@ -179,6 +165,25 @@ namespace SeatingHelper
                 {
                     DisplayPieceSeating(chartItem.Chart);
                 }
+            }
+        }
+
+        private void GenerateButton_Click(object sender, RoutedEventArgs e)
+        {
+
+            CountPlayers("");
+            chartsList.Items.Clear();
+
+            foreach (Piece piece in importedPieces)
+            {
+                bool straightSuccess = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, out Assignment[][] straightSeating);
+                if (straightSuccess)
+                {
+                    PopulateListView(straightSeating);
+                    continue;
+                }
+                bool blockSuccess = SeatingCalculation.TryBlockPieceSeating(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] blockSeating);
+                if (blockSuccess) PopulateListView(blockSeating);
             }
         }
     }

@@ -112,11 +112,14 @@ namespace SeatingHelper
                         else backRow[i / 2] = leftmostAssignments[i];
                     }
                     int leftmostCol = i / 2; // column pointer
-                    int index = 0;
                     Piece remainingAssignments = new Piece() { Assignments = testGroup.Where(g => g.Key != leftmostAssignments.First().PartName).SelectMany(g => g).ToList() };
-                    TryBlockPieceSeating(remainingAssignments, 2, testGroupRowWidth - (leftmostAssignments.Count / 2), out Assignment[][] rowRemainders);
+                    bool recursionSuccess = TryBlockPieceSeating(remainingAssignments, 2, testGroupRowWidth - (leftmostAssignments.Count / 2), out Assignment[][] rowRemainders);
+
+                    if (!recursionSuccess) return false; // for now, just break
+
                     Array.Copy(rowRemainders[0], 0, frontRow, leftmostCol, rowRemainders[0].Length);
                     Array.Copy(rowRemainders[1], 0, backRow, leftmostCol, rowRemainders[0].Length);
+
                     temporarySeating.Add(frontRow);
                     temporarySeating.Add(backRow);
                     groups.RemoveAll(g => testGroup.Any(tg => tg.Key == g.Key));
@@ -136,14 +139,15 @@ namespace SeatingHelper
                         else backRow[setIndex] = rightmostAssignments[i];
                     }
                     int rightmostCol = testGroupRowWidth - (i / 2) - 1; // column pointer
-                    int index = 0;
-                    foreach (Assignment assignment in testGroup.Where(g => g.Key != rightmostAssignments.First().PartName).SelectMany(g => g))
-                    {
-                        // fill out the other groups starting at 0 and continuing up to pointer
-                        if (index <= rightmostCol) frontRow[index] = assignment;
-                        else backRow[index % (rightmostCol + 1)] = assignment;
-                        index++;
-                    }
+
+                    Piece remainingAssignments = new Piece() { Assignments = testGroup.Where(g => g.Key != rightmostAssignments.First().PartName).SelectMany(g => g).ToList() };
+                    bool recursionSuccess = TryBlockPieceSeating(remainingAssignments, 2, testGroupRowWidth - (rightmostAssignments.Count / 2), out Assignment[][] rowRemainders);
+
+                    if (!recursionSuccess) return false; // for now, just break
+                    
+                    Array.Copy(rowRemainders[0], 0, frontRow, 0, rowRemainders[0].Length);
+                    Array.Copy(rowRemainders[1], 0, backRow, 0, rowRemainders[1].Length);
+
                     temporarySeating.Add(frontRow);
                     temporarySeating.Add(backRow);
                     groups.RemoveAll(g => testGroup.Any(tg => tg.Key == g.Key));
