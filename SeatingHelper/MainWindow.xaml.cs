@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
-using Excel = Microsoft.Office.Interop.Excel;
+using OfficeOpenXml;
 
 namespace SeatingHelper
 {
@@ -28,7 +28,7 @@ namespace SeatingHelper
         public MainWindow()
         {
             InitializeComponent();
-            PopulateMockData();
+            //PopulateMockData();
         }
 
         private void Button_Choose_File_Click(object sender, RoutedEventArgs e)
@@ -44,11 +44,19 @@ namespace SeatingHelper
 
             if (result == true)
             {
-                // eventually parse file
+                string filepath = openFileDialog.FileName;
+                ParseSheets(filepath);
+                players = importedPieces
+                            .SelectMany(p => p.Assignments)
+                            .Select(a => a.PlayerName)
+                            .Distinct()
+                            .ToList();
+                CountPlayers();
+                UpdateMaxRowWidth();
             }
             else
             {
-                //MessageBox.Show("File selection cancelled.");
+                System.Windows.MessageBox.Show("File selection cancelled.");
             }
         }
 
@@ -73,74 +81,31 @@ namespace SeatingHelper
             display.Show();
         }
 
-        private void CountPlayers(string filepath)
+        private void CountPlayers()
         {
-            //Excel.Application excelApp = new Excel.Application();
-            //Excel.Workbook excelWorkbook = excelApp.Workbooks.Open(filepath);
-            //Excel._Worksheet excelSheet = (Excel._Worksheet)excelWorkbook.Sheets[1]; // access the first sheet
-            //Excel.Range excelRange = excelSheet.UsedRange; // get the used range of cells
-
-            //numPlayers.Text = (excelRange.Rows.Count - 1).ToString();
-
             numPlayers.Text = players.Count.ToString();
         }
 
-        private void PopulateMockData()
+        private void ParseSheets(string filepath)
         {
-            Piece piece1 = new Piece() { Name = "Piece 1" };
-            piece1.Assignments.Add(new Assignment("Player 1", "1"));
-            piece1.Assignments.Add(new Assignment("Player 2", "3"));
-            piece1.Assignments.Add(new Assignment("Player 3", "5"));
-            piece1.Assignments.Add(new Assignment("Player 4", "1"));
-            piece1.Assignments.Add(new Assignment("Player 5", "2"));
-            piece1.Assignments.Add(new Assignment("Player 6", "3"));
-            piece1.Assignments.Add(new Assignment("Player 7", "4"));
-            piece1.Assignments.Add(new Assignment("Player 8", "1"));
-            piece1.Assignments.Add(new Assignment("Player 9", "3"));
-            piece1.Assignments.Add(new Assignment("Player 10", "2"));
-            piece1.Assignments.Add(new Assignment("Player 11", "4"));
-            piece1.Assignments.Add(new Assignment("Player 12", "1"));
-            piece1.Assignments.Add(new Assignment("Player 13", "3"));
-            piece1.Assignments.Add(new Assignment("Player 14", "5"));
-            piece1.Assignments.Add(new Assignment("Player 15", "5"));
-            piece1.Assignments.Add(new Assignment("Player 16", "2"));
-            piece1.Assignments.Add(new Assignment("Player 17", "4"));
-            piece1.Assignments.Add(new Assignment("Player 18", "5"));
-            piece1.Assignments.Add(new Assignment("Player 19", "2"));
-            piece1.Assignments.Add(new Assignment("Player 20", "4"));
-            Piece piece2 = new Piece() { Name = "Piece 2" };
-            piece2.Assignments.Add(new Assignment("Player 1",  "8"));
-            piece2.Assignments.Add(new Assignment("Player 2",  "1"));
-            piece2.Assignments.Add(new Assignment("Player 3",  "3"));
-            piece2.Assignments.Add(new Assignment("Player 4",  "6"));
-            piece2.Assignments.Add(new Assignment("Player 5",  "1"));
-            piece2.Assignments.Add(new Assignment("Player 6",  "4"));
-            piece2.Assignments.Add(new Assignment("Player 7",  "6"));
-            piece2.Assignments.Add(new Assignment("Player 8",  "1"));
-            piece2.Assignments.Add(new Assignment("Player 9",  "4"));
-            piece2.Assignments.Add(new Assignment("Player 10", "7"));
-            piece2.Assignments.Add(new Assignment("Player 11", "2"));
-            piece2.Assignments.Add(new Assignment("Player 12", "4"));
-            piece2.Assignments.Add(new Assignment("Player 13", "7"));
-            piece2.Assignments.Add(new Assignment("Player 14", "2"));
-            piece2.Assignments.Add(new Assignment("Player 15", "5"));
-            piece2.Assignments.Add(new Assignment("Player 16", "7"));
-            piece2.Assignments.Add(new Assignment("Player 17", "2"));
-            piece2.Assignments.Add(new Assignment("Player 18", "5"));
-            piece2.Assignments.Add(new Assignment("Player 19", "8"));
-            piece2.Assignments.Add(new Assignment("Player 20", "3"));
-            piece2.Assignments.Add(new Assignment("Player 21", "5"));
-            piece2.Assignments.Add(new Assignment("Player 22", "8"));
-            piece2.Assignments.Add(new Assignment("Player 23", "3"));
-            piece2.Assignments.Add(new Assignment("Player 24", "6"));
-            importedPieces.Add(piece1);
-            importedPieces.Add(piece2);
-            players = importedPieces
-                        .SelectMany(p => p.Assignments)
-                        .Select(a => a.PlayerName)
-                        .Distinct()
-                        .ToList();
-            UpdateMaxRowWidth();
+            importedPieces.Clear();
+            ExcelPackage.License.SetNonCommercialPersonal("Ryan Luttrull");
+            using (var package = new ExcelPackage(filepath))
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.First();
+                for (int col = 2; col <= worksheet.Columns.Count(); col++)
+                {
+                    Piece pieceToAdd = new Piece();
+                    pieceToAdd.Name = (string)worksheet.Cells[1, col].Value;
+                    for (int row = 2; row <= worksheet.Rows.Count(); row++)
+                    {
+                        string playerName = worksheet.Cells[row, 1].Value.ToString();
+                        string partName = worksheet.Cells[row, col].Value.ToString();
+                        pieceToAdd.Assignments.Add(new Assignment(playerName, partName));
+                    }
+                    importedPieces.Add(pieceToAdd);
+                }
+            }
         }
 
         private void numRows_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -172,8 +137,6 @@ namespace SeatingHelper
 
         private void GenerateButton_Click(object sender, RoutedEventArgs e)
         {
-
-            CountPlayers("");
             chartsList.Items.Clear();
 
             foreach (Piece piece in importedPieces)
