@@ -99,6 +99,7 @@ namespace SeatingHelper
                     pieceToAdd.Name = (string)worksheet.Cells[1, col].Value;
                     for (int row = 2; row <= worksheet.Rows.Count(); row++)
                     {
+                        if (worksheet.Cells[row, col].Value is null) continue;
                         string playerName = worksheet.Cells[row, 1].Value.ToString();
                         string partName = worksheet.Cells[row, col].Value.ToString();
                         pieceToAdd.Assignments.Add(new Assignment(playerName, partName));

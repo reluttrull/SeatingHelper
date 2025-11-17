@@ -83,7 +83,7 @@ namespace SeatingHelper
                 int testGroupRowWidth = (int)Math.Ceiling((double)testGroupSum / 2);
                 var testGroupAssignments = testGroup.SelectMany(g => g).ToList();
                 var leftmostAssignments = testGroup.First().ToList(); // leftmost group assignments
-                var rightmostAssignments = testGroupAssignments.Count < smallestRowWidth ? [] : testGroup.Where(g => g.Key == testGroupAssignments[smallestRowWidth - 1].PartName).First().ToList(); // rightmost assignments
+                var rightmostAssignments = testGroupAssignments.Count < maxRowWidth ? [] : testGroup.Where(g => g.Key == testGroupAssignments[maxRowWidth - 1].PartName).First().ToList(); // rightmost assignments
                 // if two rows already fit perfectly
                 if (testGroupAssignments.Count >= smallestRowWidth + 1 && testGroupAssignments[smallestRowWidth - 1].PartName != testGroupAssignments[smallestRowWidth].PartName) 
                 {
@@ -148,8 +148,8 @@ namespace SeatingHelper
                     Array.Copy(rowRemainders[0], 0, frontRow, 0, rowRemainders[0].Length);
                     Array.Copy(rowRemainders[1], 0, backRow, 0, rowRemainders[1].Length);
 
-                    temporarySeating.Add(frontRow);
-                    temporarySeating.Add(backRow);
+                    temporarySeating.Add([..frontRow.Where(item => item != null)]);
+                    temporarySeating.Add([..backRow.Where(item => item != null)]);
                     groups.RemoveAll(g => testGroup.Any(tg => tg.Key == g.Key));
                 }
                 // if cann't block, fill a single straight row as much as possible
