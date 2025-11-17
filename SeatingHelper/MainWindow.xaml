@@ -16,8 +16,7 @@
         <xctk:IntegerUpDown Value="4" HorizontalAlignment="Left" Margin="115,92,0,0" VerticalAlignment="Top" Name="numRows" Minimum="1" Maximum="8" Increment="1" Width="40" Height="20" ValueChanged="numRows_ValueChanged" />
         <Label Content="Max row width: " HorizontalAlignment="Left" Margin="37,142,0,0" VerticalAlignment="Top" />
         <xctk:IntegerUpDown Value="12" HorizontalAlignment="Left" Margin="136,146,0,0" VerticalAlignment="Top" x:Name="maxRowWidth" Minimum="4" Maximum="15" Increment="1" Width="40" Height="20" />
-        <RadioButton Content="Parts must share row" HorizontalAlignment="Left" Margin="46,202,0,0" VerticalAlignment="Top" IsEnabled="False" Opacity="0.5"/>
-        <RadioButton Content="Parts can be in blocks" HorizontalAlignment="Left" Margin="193,202,0,0" VerticalAlignment="Top" IsEnabled="False" Opacity="0.5"/>
+        <CheckBox x:Name="tryBlockFirst" Content="Try block seating first" HorizontalAlignment="Left" Margin="48,202,0,0" VerticalAlignment="Top" />
         <CheckBox Content="" HorizontalAlignment="Left" Margin="46,241,0,0" VerticalAlignment="Top" IsEnabled="False"/>
         <Label Content="Make back " HorizontalAlignment="Left" Margin="62,236,0,0" VerticalAlignment="Top" IsEnabled="False"/>
         <xctk:IntegerUpDown Value="12" HorizontalAlignment="Left" Margin="133,240,0,0" VerticalAlignment="Top" x:Name="numStraightRows" Minimum="0" Maximum="8" Increment="1" Width="40" Height="20" IsEnabled="False" />

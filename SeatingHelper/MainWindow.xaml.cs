@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using SeatingHelper.Model;
+using System.Collections.ObjectModel;
 using System.Formats.Tar;
 using System.Text;
 using System.Windows;
@@ -11,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Xceed.Wpf.Toolkit;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace SeatingHelper
@@ -46,7 +48,7 @@ namespace SeatingHelper
             }
             else
             {
-                MessageBox.Show("File selection cancelled.");
+                //MessageBox.Show("File selection cancelled.");
             }
         }
 
@@ -63,7 +65,7 @@ namespace SeatingHelper
                 displaySB.Append($"Row {i + 1}: ");
                 for (int j = 0; j < seating[i].Length; j++) // seat
                 {
-                    displaySB.Append($"  Name: {seating[i][j].PlayerName}, Part: {seating[i][j].PartName}  ");
+                    displaySB.Append($"  [{seating[i][j].PartName}]: {seating[i][j].PlayerName}  ");
                 }
                 displaySB.AppendLine();
             }
@@ -176,14 +178,37 @@ namespace SeatingHelper
 
             foreach (Piece piece in importedPieces)
             {
-                bool straightSuccess = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, out Assignment[][] straightSeating);
-                if (straightSuccess)
+                bool blockSuccess, straightSuccess;
+                if (tryBlockFirst.IsChecked == true)
                 {
-                    PopulateListView(straightSeating);
-                    continue;
+                    blockSuccess = SeatingCalculation.TryBlockPieceSeating(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] blockSeating);
+                    if (blockSuccess)
+                    {
+                        PopulateListView(blockSeating);
+                        continue;
+                    }
+                    straightSuccess = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, out Assignment[][] straightSeating);
+                    if (straightSuccess)
+                    {
+                        PopulateListView(straightSeating);
+                        continue;
+                    }
                 }
-                bool blockSuccess = SeatingCalculation.TryBlockPieceSeating(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] blockSeating);
-                if (blockSuccess) PopulateListView(blockSeating);
+                else
+                {
+                    straightSuccess = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, out Assignment[][] straightSeating);
+                    if (straightSuccess)
+                    {
+                        PopulateListView(straightSeating);
+                        continue;
+                    }
+                    blockSuccess = SeatingCalculation.TryBlockPieceSeating(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] blockSeating);
+                    if (blockSuccess)
+                    {
+                        PopulateListView(blockSeating);
+                        continue;
+                    }
+                }
             }
         }
     }
