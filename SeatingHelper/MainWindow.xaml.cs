@@ -47,15 +47,16 @@ namespace SeatingHelper
                 filenameDisplay.Text = selectedFileName;
                 CountPlayers(selectedFileName);
                 chartsList.Items.Clear();
+
                 foreach (Piece piece in importedPieces)
                 {
                     //bool success = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, out Assignment[][] seating);
-                    bool blockSuccess = SeatingCalculation.TryBlockPieceSeating(importedPieces[0], numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] seating); 
+                    bool blockSuccess = SeatingCalculation.TryBlockPieceSeating(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] seating); 
                     if (blockSuccess) PopulateListView(seating);
                 }
-                bool exampleSuccess = SeatingCalculation.TrySimplePieceSeating(importedPieces[1], numRows.Value ?? 0, out Assignment[][] displaySeatingExample);
-                if (exampleSuccess) DisplayPieceSeating(displaySeatingExample);
-                else MessageBox.Show($"Parts don't fit cleanly into {numRows.Value ?? 0} rows.");
+                //bool exampleSuccess = SeatingCalculation.TrySimplePieceSeating(importedPieces[1], numRows.Value ?? 0, out Assignment[][] displaySeatingExample);
+                //if (exampleSuccess) DisplayPieceSeating(displaySeatingExample);
+                //else MessageBox.Show($"Parts don't fit cleanly into {numRows.Value ?? 0} rows.");
             }
             else
             {

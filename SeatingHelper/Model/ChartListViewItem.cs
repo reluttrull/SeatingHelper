@@ -12,7 +12,13 @@ namespace SeatingHelper.Model
 
         public ChartListViewItem(Assignment[][] chart)
         {
-            Chart = chart;
+            if (chart is null) chart = [];
+            Chart = new Assignment[chart.Length][];
+            for (int i = 0; i < chart.Length; i++)
+            {
+                Chart[i] = new Assignment[chart[i].Length];
+                Array.Copy(chart[i], Chart[i], chart[i].Length);
+            }
             Rows = chart.Length;
             Players = chart.Sum(row => row.Length);
         }

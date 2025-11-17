@@ -41,14 +41,7 @@ namespace SeatingHelper
         {
             seating = new Assignment[rows][];
             var groups = piece.Assignments.OrderBy(a => a.PartName).GroupBy(a => a.PartName).Select(g => new List<IGrouping<string,Assignment>>() { g }).ToList();
-            if (groups.Count <= rows)
-            {
-                for (int i = 0; i < groups.Count; i++)
-                {
-                    seating[i] = groups[i].SelectMany(g => g).ToArray();
-                }
-                return true;
-            }
+
             int step = 0;
             while (groups.Count > rows)
             {
@@ -76,16 +69,7 @@ namespace SeatingHelper
             int smallestRowWidth = (int)Math.Ceiling((double)piece.Assignments.Count / rows);
             var groups = piece.Assignments.GroupBy(a => a.PartName).OrderBy(g => g.Key).ToList();
 
-            if (groups.Count <= rows)
-            {
-                for (int i = 0; i < groups.Count; i++)
-                {
-                    seating[i] = groups[i].ToArray();
-                }
-                return true;
-            }
-
-            List<Assignment[]> temporarySeating = new List<Assignment[]>();
+            List<Assignment[]> temporarySeating = [];
             while (groups.Count > 0)
             {
                 int testGroupSum = 0;
@@ -99,22 +83,23 @@ namespace SeatingHelper
                 int testGroupRowWidth = (int)Math.Ceiling((double)testGroupSum / 2);
                 var testGroupAssignments = testGroup.SelectMany(g => g).ToList();
                 var leftmostAssignments = testGroup.First().ToList(); // leftmost group assignments
-                var rightmostAssignments = testGroup.Where(g => g.Key == testGroupAssignments[smallestRowWidth - 1].PartName).First().ToList(); // rightmost assignments
-                if (testGroupAssignments[smallestRowWidth - 1].PartName != testGroupAssignments[smallestRowWidth].PartName)
+                var rightmostAssignments = testGroupAssignments.Count < smallestRowWidth ? [] : testGroup.Where(g => g.Key == testGroupAssignments[smallestRowWidth - 1].PartName).First().ToList(); // rightmost assignments
+                // if two rows already fit perfectly
+                if (testGroupAssignments.Count >= smallestRowWidth + 1 && testGroupAssignments[smallestRowWidth - 1].PartName != testGroupAssignments[smallestRowWidth].PartName) 
                 {
-                    // don't need to block to fit into two rows with smallest row width
                     int frontRowSum = 0;
                     Assignment[] frontRow = testGroup.TakeWhile(g =>
                     {
                         frontRowSum += g.Count();
                         return frontRowSum <= smallestRowWidth;
                     }).SelectMany(g => g).ToArray();
-                    Assignment[] backRow = testGroup.SelectMany(g => g).Except(frontRow).ToArray();
+                    Assignment[] backRow = [..testGroup.SelectMany(g => g).Except(frontRow)];
                     temporarySeating.Add(frontRow);
                     temporarySeating.Add(backRow);
                     groups.RemoveAll(g => testGroup.Any(tg => tg.Key == g.Key));
                 }
-                else if (testGroupRowWidth >= smallestRowWidth && leftmostAssignments.Count % 2 == 0) // if blocking and  leftmost is even
+                // if blocking and  leftmost is even
+                else if (testGroupRowWidth >= smallestRowWidth && leftmostAssignments.Count % 2 == 0) 
                 {
                     // use leftmost group as block
                     Assignment[] frontRow = new Assignment[testGroupRowWidth];
@@ -128,18 +113,16 @@ namespace SeatingHelper
                     }
                     int leftmostCol = i / 2; // column pointer
                     int index = 0;
-                    foreach (Assignment assignment in testGroup.Where(g => g.Key != leftmostAssignments.First().PartName).SelectMany(g => g))
-                    {
-                        // fill out the others
-                        if (index + leftmostCol < testGroupRowWidth) frontRow[index + leftmostCol] = assignment;
-                        else backRow[((index + leftmostCol) % testGroupRowWidth) + leftmostCol] = assignment;
-                        index++;
-                    }
+                    Piece remainingAssignments = new Piece() { Assignments = testGroup.Where(g => g.Key != leftmostAssignments.First().PartName).SelectMany(g => g).ToList() };
+                    TryBlockPieceSeating(remainingAssignments, 2, testGroupRowWidth - (leftmostAssignments.Count / 2), out Assignment[][] rowRemainders);
+                    Array.Copy(rowRemainders[0], 0, frontRow, leftmostCol, rowRemainders[0].Length);
+                    Array.Copy(rowRemainders[1], 0, backRow, leftmostCol, rowRemainders[0].Length);
                     temporarySeating.Add(frontRow);
                     temporarySeating.Add(backRow);
                     groups.RemoveAll(g => testGroup.Any(tg => tg.Key == g.Key));
-                }
-                else if (testGroupRowWidth >= smallestRowWidth && rightmostAssignments.Count % 2 == 0) // if blocking and rightmost is even
+                } 
+                // if blocking and rightmost is even
+                else if (testGroupRowWidth >= smallestRowWidth && rightmostAssignments.Count % 2 == 0)
                 {
                     // try use group that overflows on right as block
                     Assignment[] frontRow = new Assignment[testGroupRowWidth];
@@ -156,7 +139,7 @@ namespace SeatingHelper
                     int index = 0;
                     foreach (Assignment assignment in testGroup.Where(g => g.Key != rightmostAssignments.First().PartName).SelectMany(g => g))
                     {
-                        // fill out the others
+                        // fill out the other groups starting at 0 and continuing up to pointer
                         if (index <= rightmostCol) frontRow[index] = assignment;
                         else backRow[index % (rightmostCol + 1)] = assignment;
                         index++;
@@ -165,9 +148,9 @@ namespace SeatingHelper
                     temporarySeating.Add(backRow);
                     groups.RemoveAll(g => testGroup.Any(tg => tg.Key == g.Key));
                 }
+                // if cann't block, fill a single straight row as much as possible
                 else
                 {
-                    // cann't block, fill a single straight row as much as possible
                     int frontRowSum = 0;
                     Assignment[] frontRow = testGroup.TakeWhile(g =>
                     {
@@ -178,7 +161,7 @@ namespace SeatingHelper
                     groups.RemoveAll(g => frontRow.Any(a => a.PartName == g.Key));
                 }
             }
-            seating = temporarySeating.ToArray();
+            seating = [..temporarySeating];
 
             return true;
         }
