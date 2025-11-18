@@ -45,6 +45,7 @@ namespace SeatingHelper
             if (result == true)
             {
                 string filepath = openFileDialog.FileName;
+                filenameDisplay.Text = filepath;
                 ParseSheets(filepath);
                 players = importedPieces
                             .SelectMany(p => p.Assignments)
