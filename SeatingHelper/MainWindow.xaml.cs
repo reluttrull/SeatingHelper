@@ -152,7 +152,7 @@ namespace SeatingHelper
                         PopulateListView(blockSeating);
                         continue;
                     }
-                    straightSuccess = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, out Assignment[][] straightSeating);
+                    straightSuccess = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] straightSeating);
                     if (straightSuccess)
                     {
                         PopulateListView(straightSeating);
@@ -161,7 +161,7 @@ namespace SeatingHelper
                 }
                 else
                 {
-                    straightSuccess = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, out Assignment[][] straightSeating);
+                    straightSuccess = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] straightSeating);
                     if (straightSuccess)
                     {
                         PopulateListView(straightSeating);

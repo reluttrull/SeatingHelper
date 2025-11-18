@@ -37,29 +37,29 @@ namespace SeatingHelper
             return true;
         }
 
-        public static bool TryLongerRowsPieceSeating(Piece piece, int rows, out Assignment[][] seating)
+        public static bool TryLongerRowsPieceSeating(Piece piece, int rows, int maxRowWidth, out Assignment[][] seating)
         {
             seating = new Assignment[rows][];
-            var groups = piece.Assignments.GroupBy(a => a.PartName).OrderBy(g => g.Key.Length).ThenBy(g => g.Key).Select(g => new List<IGrouping<string,Assignment>>() { g }).ToList();
+            List<Assignment[]> temporarySeating = [];
+            var groups = piece.Assignments.GroupBy(a => a.PartName).OrderBy(g => g.Key.Length).ThenBy(g => g.Key).ToList();
 
-            int step = 0;
-            while (groups.Count > rows)
+            int row = 0;
+            while (groups.Count > 0)
             {
-                Console.WriteLine(step % (groups.Count - 1) + 1);
-                for (int i = (step % (groups.Count - 1) + 1); i < groups.Count; i++)
+                int testGroupSum = 0;
+                var testGroups = groups.TakeWhile(g =>
                 {
-                    IGrouping<string, Assignment> group = groups[i].First();
-                    groups[i - 1].Add(group);
-                    groups[i].Remove(group);
-                }
-                step++;
-                if (groups[groups.Count - 1].Count == 0) groups.RemoveAt(groups.Count - 1);
-                if (step > 100) return false;
+                    int groupCount = g.Count();
+                    if (testGroupSum + groupCount > maxRowWidth) return false;
+                    testGroupSum += groupCount;
+                    return true;
+                }).ToList();
+                temporarySeating.Add([.. testGroups.SelectMany(g => g)]);
+                groups.RemoveAll(g => testGroups.Any(tg => tg.Key == g.Key));
+                row++;
             }
-            for (int i = 0; i < groups.Count; i++)
-            {
-                seating[i] = groups[i].SelectMany(g => g).ToArray();
-            }
+            if (temporarySeating.Count > rows) return false;
+            seating = [.. temporarySeating];
             return true;
         }
 
@@ -85,7 +85,9 @@ namespace SeatingHelper
                 var leftmostAssignments = testGroup.First().ToList(); // leftmost group assignments
                 var rightmostAssignments = testGroupAssignments.Count < maxRowWidth ? [] : testGroup.Where(g => g.Key == testGroupAssignments[maxRowWidth - 1].PartName).First().ToList(); // rightmost assignments
                 // if two rows already fit perfectly
-                if (testGroupAssignments.Count >= testGroupRowWidth + 1 && testGroupAssignments[testGroupRowWidth - 1].PartName != testGroupAssignments[testGroupRowWidth].PartName) 
+                if (testGroupAssignments.Count >= testGroupRowWidth + 1 
+                    && testGroupAssignments[testGroupRowWidth - 1].PartName != testGroupAssignments[testGroupRowWidth].PartName
+                    && testGroupSum > smallestRowWidth) 
                 {
                     int frontRowSum = 0;
                     Assignment[] frontRow = testGroup.TakeWhile(g =>
