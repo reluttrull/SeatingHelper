@@ -88,5 +88,55 @@ namespace SeatingHelper.Tests
             Assert.That(seating[1][0].PartName, Is.EqualTo("3"));
         }
 
+        [Test]
+        public void TestPriority()
+        {
+            Piece allSamePart = new Piece()
+            {
+                Name = "Simple Left Straight",
+                Assignments = new List<Assignment>()
+                {
+                    new Assignment("Roger", "1", 2),
+                    new Assignment("Nancy", "1", 1),
+                    new Assignment("Fred", "1", 4),
+                    new Assignment("Malik", "1", 3),
+                    new Assignment("Jenny", "1", 5),
+                    new Assignment("Hans", "1", 6)
+                }
+            };
+            bool success = SeatingCalculation.TryLongerRowsPieceSeating(allSamePart, 1, 6, out Assignment[][] seating);
+            Assert.That(success, Is.True);
+            Assert.That(seating[0].Length, Is.EqualTo(6));
+            Assert.That(seating[0][0].PlayerName, Is.EqualTo("Nancy"));
+            Assert.That(seating[0][1].PlayerName, Is.EqualTo("Roger"));
+            Assert.That(seating[0][2].PlayerName, Is.EqualTo("Malik"));
+            Assert.That(seating[0][3].PlayerName, Is.EqualTo("Fred"));
+            Assert.That(seating[0][4].PlayerName, Is.EqualTo("Jenny"));
+            Assert.That(seating[0][5].PlayerName, Is.EqualTo("Hans"));
+        }
+
+        [Test]
+        public void TestPartialPriority()
+        {
+            Piece allSamePart = new Piece()
+            {
+                Name = "Simple Left Straight",
+                Assignments = new List<Assignment>()
+                {
+                    new Assignment("Roger", "1", 2),
+                    new Assignment("Nancy", "1", 1),
+                    new Assignment("Fred", "1"),
+                    new Assignment("Malik", "1", 3),
+                    new Assignment("Jenny", "1"),
+                    new Assignment("Hans", "1")
+                }
+            };
+            bool success = SeatingCalculation.TryLongerRowsPieceSeating(allSamePart, 1, 6, out Assignment[][] seating);
+            Assert.That(success, Is.True);
+            Assert.That(seating[0].Length, Is.EqualTo(6));
+            Assert.That(seating[0][0].PlayerName, Is.EqualTo("Nancy"));
+            Assert.That(seating[0][1].PlayerName, Is.EqualTo("Roger"));
+            Assert.That(seating[0][2].PlayerName, Is.EqualTo("Malik"));
+        }
     }
 }

@@ -94,16 +94,25 @@ namespace SeatingHelper
             using (var package = new ExcelPackage(filepath))
             {
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.First();
-                for (int col = 2; col <= worksheet.Columns.Count(); col++)
+                bool hasPriority = false;
+                int col = 1;
+                if (worksheet.Cells[1, 2].GetValue<string>().Equals("PRIORITY (OPTIONAL)", StringComparison.CurrentCultureIgnoreCase))
                 {
+                    hasPriority = true;
+                    col++;
+                }
+                while (col + 1 <= worksheet.Columns.Count())
+                {
+                    col++;
                     Piece pieceToAdd = new Piece();
                     pieceToAdd.Name = (string)worksheet.Cells[1, col].Value;
                     for (int row = 2; row <= worksheet.Rows.Count(); row++)
                     {
                         if (worksheet.Cells[row, col].Value is null) continue;
-                        string playerName = worksheet.Cells[row, 1].Value.ToString();
-                        string partName = worksheet.Cells[row, col].Value.ToString();
-                        pieceToAdd.Assignments.Add(new Assignment(playerName, partName));
+                        string playerName = worksheet.Cells[row, 1].GetValue<string>();
+                        string partName = worksheet.Cells[row, col].GetValue<string>();
+                        int priority = hasPriority && worksheet.Cells[row,2].Value is not null ? worksheet.Cells[row, 2].GetValue<int>() : Int32.MaxValue;
+                        pieceToAdd.Assignments.Add(new Assignment(playerName, partName, priority));
                     }
                     importedPieces.Add(pieceToAdd);
                 }

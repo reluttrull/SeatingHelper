@@ -12,7 +12,7 @@ namespace SeatingHelper
         {
             seating = new Assignment[rows][];
             List<Assignment[]> temporarySeating = [];
-            var groups = piece.Assignments.GroupBy(a => a.PartName).OrderBy(g => g.Key.Length).ThenBy(g => g.Key).ToList();
+            var groups = piece.Assignments.OrderBy(a => a.Priority).GroupBy(a => a.PartName).OrderBy(g => g.Key.Length).ThenBy(g => g.Key).ToList();
 
             int row = 0;
             while (groups.Count > 0)
@@ -38,7 +38,7 @@ namespace SeatingHelper
         {
             seating = new Assignment[rows][];
             int smallestRowWidth = (int)Math.Ceiling((double)piece.Assignments.Count / rows);
-            var groups = piece.Assignments.GroupBy(a => a.PartName).OrderBy(g => g.Key.Length).ThenBy(g => g.Key).ToList();
+            var groups = piece.Assignments.OrderBy(a => a.Priority).GroupBy(a => a.PartName).OrderBy(g => g.Key.Length).ThenBy(g => g.Key).ToList();
 
             List<Assignment[]> temporarySeating = [];
             while (groups.Count > 0)
