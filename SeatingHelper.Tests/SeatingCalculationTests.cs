@@ -1,0 +1,64 @@
+﻿using SeatingHelper.Model;
+using NUnit;
+using NUnit.Framework;
+
+namespace SeatingHelper.Tests
+{
+    public class Tests
+    {
+        [SetUp]
+        public void Setup()
+        {
+        }
+
+        [Test]
+        public void TestLeftBlock()
+        {
+            Piece simpleLeftBlock = new Piece()
+            {
+                Name = "Simple Left Block",
+                Assignments = new List<Assignment>()
+                {
+                    new Assignment("Roger", "1"),
+                    new Assignment("Nancy", "1"),
+                    new Assignment("Malik", "2"),
+                    new Assignment("Jenny", "2"),
+                    new Assignment("Hans", "2"),
+                    new Assignment("Aria", "3"),
+                    new Assignment("Peter", "3"),
+                    new Assignment("Valerie", "3")
+                }
+            };
+            bool success = SeatingCalculation.TryBlockPieceSeating(simpleLeftBlock, 2, 4, out Assignment[][] seating);
+            Assert.That(success, Is.True);
+            Assert.That(seating[0][0].PartName, Is.EqualTo(seating[1][0].PartName));
+            Assert.That(seating[0].Length, Is.EqualTo(4));
+            Assert.That(seating[1].Length, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void TestRightBlock()
+        {
+            Piece simpleLeftBlock = new Piece()
+            {
+                Name = "Simple Left Block",
+                Assignments = new List<Assignment>()
+                {
+                    new Assignment("Roger", "1"),
+                    new Assignment("Nancy", "1"),
+                    new Assignment("Malik", "1"),
+                    new Assignment("Jenny", "2"),
+                    new Assignment("Hans", "2"),
+                    new Assignment("Aria", "3"),
+                    new Assignment("Peter", "3"),
+                    new Assignment("Valerie", "3")
+                }
+            };
+            bool success = SeatingCalculation.TryBlockPieceSeating(simpleLeftBlock, 2, 4, out Assignment[][] seating);
+            Assert.That(success, Is.True);
+            Assert.That(seating[0].Length, Is.EqualTo(4));
+            Assert.That(seating[1].Length, Is.EqualTo(4));
+            Assert.That(seating[0][3].PartName, Is.EqualTo(seating[1][3].PartName));
+        }
+    }
+}

@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="SeatingHelper.Tests/SeatingHelper.Tests.csproj" Id="c1590e76-b72c-4c7f-afc3-62094df615fa" />
   <Project Path="SeatingHelper/SeatingHelper.csproj" />
 </Solution>
