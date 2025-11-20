@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
 using OfficeOpenXml;
+using System.IO.Packaging;
 
 namespace SeatingHelper
 {
@@ -36,7 +37,7 @@ namespace SeatingHelper
             OpenFileDialog openFileDialog = new OpenFileDialog();
 
             openFileDialog.Title = "Select a File";
-            openFileDialog.Filter = "*.xls|*.xlsx";
+            openFileDialog.Filter = "Excel Sheet (*.xls, *.xlsx)|*.xls;*.xlsx";
             openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             openFileDialog.Multiselect = false; 
 
@@ -44,6 +45,7 @@ namespace SeatingHelper
 
             if (result == true)
             {
+                exportButton.IsEnabled = false;
                 string filepath = openFileDialog.FileName;
                 filenameDisplay.Text = filepath;
                 ParseSheets(filepath);
@@ -148,6 +150,7 @@ namespace SeatingHelper
 
         private void GenerateButton_Click(object sender, RoutedEventArgs e)
         {
+            seatingCharts.Clear();
             chartsList.Items.Clear();
 
             foreach (Piece piece in importedPieces)
@@ -158,12 +161,14 @@ namespace SeatingHelper
                     blockSuccess = SeatingCalculation.TryBlockPieceSeating(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] blockSeating);
                     if (blockSuccess)
                     {
+                        seatingCharts.Add(blockSeating);
                         PopulateListView(blockSeating);
                         continue;
                     }
                     straightSuccess = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] straightSeating);
                     if (straightSuccess)
                     {
+                        seatingCharts.Add(straightSeating);
                         PopulateListView(straightSeating);
                         continue;
                     }
@@ -173,15 +178,65 @@ namespace SeatingHelper
                     straightSuccess = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] straightSeating);
                     if (straightSuccess)
                     {
+                        seatingCharts.Add(straightSeating);
                         PopulateListView(straightSeating);
                         continue;
                     }
                     blockSuccess = SeatingCalculation.TryBlockPieceSeating(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] blockSeating);
                     if (blockSuccess)
                     {
+                        seatingCharts.Add(blockSeating);
                         PopulateListView(blockSeating);
                         continue;
                     }
+                }
+            }
+            exportButton.IsEnabled = true;
+        }
+
+        private ExcelPackage GenerateExcelPackage(List<Assignment[][]> seatingCharts)
+        {
+            ExcelPackage package = new ExcelPackage();
+            for (int i = 0; i < seatingCharts.Count; i++)
+            {
+                Assignment[][] seatingChart = seatingCharts[i];
+                ExcelWorksheet ws = package.Workbook.Worksheets.Add($"\"{importedPieces[i].Name}\"");
+                for (int row = 0; row < seatingChart.Length; row++)
+                {
+                    for (int col = 0; col < seatingChart[row].Length; col++)
+                    {
+                        ws.Cells[row + 1, col + 1].Value = $"{seatingChart[row][col].PartName}: {seatingChart[row][col].PlayerName}";
+                    }
+                }
+            }
+            return package;
+        }
+
+        private void ExportButton_Click(object sender, RoutedEventArgs e)
+        {
+            var saveDialog = new SaveFileDialog
+            {
+                FileName = "SeatingCharts",
+                DefaultExt = ".xlsx",
+                Filter = "Excel Sheet (*.xls, *.xlsx)|*.xls;*.xlsx"
+            };
+            var result = saveDialog.ShowDialog();
+
+            if (result == true)
+            {
+                try
+                {
+                    using var stream = saveDialog.OpenFile();
+                    ExcelPackage.License.SetNonCommercialPersonal("Ryan Luttrull");
+                    using (ExcelPackage package = GenerateExcelPackage(seatingCharts))
+                    {
+                        package.SaveAs(stream);
+                    }
+                    System.Windows.MessageBox.Show("File Created");
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show(ex.Message);
                 }
             }
         }

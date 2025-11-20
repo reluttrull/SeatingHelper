@@ -22,6 +22,7 @@
         <xctk:IntegerUpDown Value="12" HorizontalAlignment="Left" Margin="133,240,0,0" VerticalAlignment="Top" x:Name="numStraightRows" Minimum="0" Maximum="8" Increment="1" Width="40" Height="20" IsEnabled="False" />
         <Label Content="rows straight" HorizontalAlignment="Left" Margin="183,236,0,0" VerticalAlignment="Top" IsEnabled="False"/>
         <Button Content="Generate charts!" HorizontalAlignment="Left" Margin="46,294,0,0" VerticalAlignment="Top" Click="GenerateButton_Click"/>
+        <Button x:Name="exportButton" Content="Export charts" HorizontalAlignment="Left" Margin="46,326,0,0" VerticalAlignment="Top" IsEnabled="False" Click="ExportButton_Click"/>
         <ListView x:Name="chartsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="383,0,0,0">
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
