@@ -24,6 +24,7 @@ namespace SeatingHelper
     public partial class MainWindow : Window
     {
         private List<string> players = new List<string>();
+        private List<string> scoreOrder = new List<string>();
         private List<Piece> importedPieces = new List<Piece>();
         private List<Assignment[][]> seatingCharts = new List<Assignment[][]>();
         public MainWindow()
@@ -117,6 +118,16 @@ namespace SeatingHelper
                         pieceToAdd.Assignments.Add(new Assignment(playerName, partName, priority));
                     }
                     importedPieces.Add(pieceToAdd);
+                }
+
+                scoreOrder.Clear();
+                ExcelWorksheet scoreOrderWorksheet = package.Workbook.Worksheets.Where(w => w.Name.Trim().Equals("SCORE ORDER", StringComparison.CurrentCultureIgnoreCase)).First();
+                if (scoreOrderWorksheet is not null)
+                {
+                    for (int row = 1; row <= scoreOrderWorksheet.Rows.Count(); row++)
+                    {
+                        scoreOrder.Add(scoreOrderWorksheet.Cells[row, 1].GetValue<string>());
+                    }
                 }
             }
         }
