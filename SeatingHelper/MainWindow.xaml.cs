@@ -26,6 +26,7 @@ namespace SeatingHelper
         private List<string> players = new List<string>();
         private List<Piece> importedPieces = new List<Piece>();
         private List<Assignment[][]> seatingCharts = new List<Assignment[][]>();
+        private List<ChartListViewItem> chartListViewItems = new List<ChartListViewItem>();
         private List<string>? scoreOrder = null;
         public MainWindow()
         {
@@ -66,7 +67,7 @@ namespace SeatingHelper
 
         private void PopulateListView(Assignment[][] seating)
         {
-            chartsList.Items.Add(new ChartListViewItem(seating));
+            chartListViewItems.Add(new ChartListViewItem(seating));
         }
 
         private void DisplayPieceSeating(Assignment[][] seating)
@@ -148,23 +149,24 @@ namespace SeatingHelper
             }
         }
 
-        private void ListViewItem_DoubleClick(object sender, RoutedEventArgs e)
+        private void DataGridItem_DoubleClick(object sender, RoutedEventArgs e)
         {
-            ListViewItem item = sender as ListViewItem;
-            if (item != null && item.IsSelected)
+            DataGridRow? row = sender as DataGridRow;
+            ChartListViewItem? chartItem = null;
+            if (row is not null && row.IsSelected)
             {
-                ChartListViewItem chartItem = item.Content as ChartListViewItem;
-                if (chartItem?.Chart != null)
-                {
-                    DisplayPieceSeating(chartItem.Chart);
-                }
+                chartItem = row.Item as ChartListViewItem;
+            }
+            if (chartItem?.Chart is not null)
+            {
+                DisplayPieceSeating(chartItem.Chart);
             }
         }
 
         private void GenerateButton_Click(object sender, RoutedEventArgs e)
         {
             seatingCharts.Clear();
-            chartsList.Items.Clear();
+            chartListViewItems.Clear();
 
             foreach (Piece piece in importedPieces)
             {
@@ -206,6 +208,7 @@ namespace SeatingHelper
                     }
                 }
             }
+            chartsList.ItemsSource = chartListViewItems;
             exportButton.IsEnabled = true;
         }
 

@@ -15,6 +15,7 @@
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="8.2.1" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="5.0.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.3.0" />
   </ItemGroup>
 
 </Project>

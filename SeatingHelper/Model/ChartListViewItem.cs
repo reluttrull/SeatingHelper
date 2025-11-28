@@ -6,9 +6,9 @@ namespace SeatingHelper.Model
 {
     public class ChartListViewItem
     {
-        public int Rows { get; }
-        public long Players { get; }
-        public Assignment[][] Chart { get; }
+        public int Rows { get; set; }
+        public long Players { get; set; }
+        public Assignment[][] Chart { get; set; }
 
         public ChartListViewItem(Assignment[][] chart)
         {
