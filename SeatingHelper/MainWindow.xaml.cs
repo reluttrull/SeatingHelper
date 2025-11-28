@@ -166,17 +166,18 @@ namespace SeatingHelper
 
             foreach (Piece piece in importedPieces)
             {
+                SeatingCalculator seatingCalculator = new SeatingCalculator(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0);
                 bool blockSuccess, straightSuccess;
                 if (tryBlockFirst.IsChecked == true)
                 {
-                    blockSuccess = SeatingCalculation.TryBlockPieceSeating(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] blockSeating);
+                    blockSuccess = seatingCalculator.TryBlockPieceSeating(out Assignment[][] blockSeating);
                     if (blockSuccess)
                     {
                         seatingCharts.Add(blockSeating);
                         PopulateListView(blockSeating);
                         continue;
                     }
-                    straightSuccess = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] straightSeating);
+                    straightSuccess = seatingCalculator.TryLongerRowsPieceSeating(out Assignment[][] straightSeating);
                     if (straightSuccess)
                     {
                         seatingCharts.Add(straightSeating);
@@ -186,14 +187,14 @@ namespace SeatingHelper
                 }
                 else
                 {
-                    straightSuccess = SeatingCalculation.TryLongerRowsPieceSeating(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] straightSeating);
+                    straightSuccess = seatingCalculator.TryLongerRowsPieceSeating(out Assignment[][] straightSeating);
                     if (straightSuccess)
                     {
                         seatingCharts.Add(straightSeating);
                         PopulateListView(straightSeating);
                         continue;
                     }
-                    blockSuccess = SeatingCalculation.TryBlockPieceSeating(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0, out Assignment[][] blockSeating);
+                    blockSuccess = seatingCalculator.TryBlockPieceSeating(out Assignment[][] blockSeating);
                     if (blockSuccess)
                     {
                         seatingCharts.Add(blockSeating);

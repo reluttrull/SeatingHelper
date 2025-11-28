@@ -6,13 +6,22 @@ using System.Text;
 
 namespace SeatingHelper
 {
-    public class SeatingCalculation
+    public class SeatingCalculator
     {
-        public static bool TryLongerRowsPieceSeating(Piece piece, int rows, int maxRowWidth, out Assignment[][] seating)
+        public Piece Piece {  get; set; }
+        public int Rows { get; set; }
+        public int MaxRowWidth { get; set; }
+        public SeatingCalculator(Piece piece, int rows, int maxRowWidth) 
         {
-            seating = new Assignment[rows][];
+            Piece = piece;
+            Rows = rows;
+            MaxRowWidth = maxRowWidth;
+        }
+        public bool TryLongerRowsPieceSeating(out Assignment[][] seating)
+        {
+            seating = new Assignment[Rows][];
             List<Assignment[]> temporarySeating = [];
-            var groups = piece.Assignments.OrderBy(a => a.Priority).GroupBy(a => a.PartName).OrderBy(g => g.Key.Length).ThenBy(g => g.Key).ToList();
+            var groups = Piece.Assignments.OrderBy(a => a.Priority).GroupBy(a => a.PartName).OrderBy(g => g.Key.Length).ThenBy(g => g.Key).ToList();
 
             int row = 0;
             while (groups.Count > 0)
@@ -21,7 +30,7 @@ namespace SeatingHelper
                 var testGroups = groups.TakeWhile(g =>
                 {
                     int groupCount = g.Count();
-                    if (testGroupSum + groupCount > maxRowWidth) return false;
+                    if (testGroupSum + groupCount > MaxRowWidth) return false;
                     testGroupSum += groupCount;
                     return true;
                 }).ToList();
@@ -29,16 +38,16 @@ namespace SeatingHelper
                 groups.RemoveAll(g => testGroups.Any(tg => tg.Key == g.Key));
                 row++;
             }
-            if (temporarySeating.Count > rows) return false;
+            if (temporarySeating.Count > Rows) return false;
             seating = [.. temporarySeating];
             return true;
         }
 
-        public static bool TryBlockPieceSeating(Piece piece, int rows, int maxRowWidth, out Assignment[][] seating)
+        public bool TryBlockPieceSeating(out Assignment[][] seating)
         {
-            seating = new Assignment[rows][];
-            int smallestRowWidth = (int)Math.Ceiling((double)piece.Assignments.Count / rows);
-            var groups = piece.Assignments.OrderBy(a => a.Priority).GroupBy(a => a.PartName).OrderBy(g => g.Key.Length).ThenBy(g => g.Key).ToList();
+            seating = new Assignment[Rows][];
+            int smallestRowWidth = (int)Math.Ceiling((double)Piece.Assignments.Count / Rows);
+            var groups = Piece.Assignments.OrderBy(a => a.Priority).GroupBy(a => a.PartName).OrderBy(g => g.Key.Length).ThenBy(g => g.Key).ToList();
 
             List<Assignment[]> temporarySeating = [];
             while (groups.Count > 0)
@@ -47,14 +56,14 @@ namespace SeatingHelper
                 var testGroup = groups.TakeWhile(g =>
                 {
                     int groupCount = g.Count();
-                    if (testGroupSum + groupCount > (maxRowWidth * 2)) return false;
+                    if (testGroupSum + groupCount > (MaxRowWidth * 2)) return false;
                     testGroupSum += groupCount;
                     return true;
                 }).ToList();
                 int testGroupRowWidth = (int)Math.Ceiling((double)testGroupSum / 2);
                 var testGroupAssignments = testGroup.SelectMany(g => g).ToList();
                 var leftmostAssignments = testGroup.First().ToList(); // leftmost group assignments
-                var rightmostAssignments = testGroupAssignments.Count < maxRowWidth ? [] : testGroup.Where(g => g.Key == testGroupAssignments[maxRowWidth - 1].PartName).First().ToList(); // rightmost assignments
+                var rightmostAssignments = testGroupAssignments.Count < MaxRowWidth ? [] : testGroup.Where(g => g.Key == testGroupAssignments[MaxRowWidth - 1].PartName).First().ToList(); // rightmost assignments
                 // if two rows already fit perfectly
                 if (testGroupAssignments.Count >= testGroupRowWidth + 1 
                     && testGroupAssignments[testGroupRowWidth - 1].PartName != testGroupAssignments[testGroupRowWidth].PartName
@@ -86,7 +95,8 @@ namespace SeatingHelper
                     }
                     int leftmostCol = i / 2; // column pointer
                     Piece remainingAssignments = new Piece() { Assignments = testGroup.Where(g => g.Key != leftmostAssignments.First().PartName).SelectMany(g => g).ToList() };
-                    bool recursionSuccess = TryBlockPieceSeating(remainingAssignments, 2, testGroupRowWidth - (leftmostAssignments.Count / 2), out Assignment[][] rowRemainders);
+                    SeatingCalculator recursiveCalculator = new SeatingCalculator(remainingAssignments, 2, testGroupRowWidth - (leftmostAssignments.Count / 2));
+                    bool recursionSuccess = recursiveCalculator.TryBlockPieceSeating(out Assignment[][] rowRemainders);
 
                     if (!recursionSuccess) return false; // for now, just break
 
@@ -114,7 +124,8 @@ namespace SeatingHelper
                     int rightmostCol = testGroupRowWidth - (i / 2) - 1; // column pointer
 
                     Piece remainingAssignments = new Piece() { Assignments = testGroup.Where(g => g.Key != rightmostAssignments.First().PartName).SelectMany(g => g).ToList() };
-                    bool recursionSuccess = TryBlockPieceSeating(remainingAssignments, 2, testGroupRowWidth - (rightmostAssignments.Count / 2), out Assignment[][] rowRemainders);
+                    SeatingCalculator recursiveCalculator = new SeatingCalculator(remainingAssignments, 2, testGroupRowWidth - (rightmostAssignments.Count / 2));
+                    bool recursionSuccess = recursiveCalculator.TryBlockPieceSeating(out Assignment[][] rowRemainders);
 
                     if (!recursionSuccess) return false; // for now, just break
                     

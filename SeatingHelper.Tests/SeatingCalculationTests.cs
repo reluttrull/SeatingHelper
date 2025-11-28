@@ -29,7 +29,8 @@ namespace SeatingHelper.Tests
                     new Assignment("Valerie", "3")
                 }
             };
-            bool success = SeatingCalculation.TryBlockPieceSeating(simpleLeftBlock, 2, 4, out Assignment[][] seating);
+            SeatingCalculator seatingCalculator = new SeatingCalculator(simpleLeftBlock, 2, 4);
+            bool success = seatingCalculator.TryBlockPieceSeating(out Assignment[][] seating);
             Assert.That(success, Is.True);
             Assert.That(seating[0][0].PartName, Is.EqualTo(seating[1][0].PartName));
             Assert.That(seating[0].Length, Is.EqualTo(4));
@@ -54,7 +55,8 @@ namespace SeatingHelper.Tests
                     new Assignment("Valerie", "3")
                 }
             };
-            bool success = SeatingCalculation.TryBlockPieceSeating(simpleLeftBlock, 2, 4, out Assignment[][] seating);
+            SeatingCalculator seatingCalculator = new SeatingCalculator(simpleLeftBlock, 2, 4);
+            bool success = seatingCalculator.TryBlockPieceSeating(out Assignment[][] seating);
             Assert.That(success, Is.True);
             Assert.That(seating[0].Length, Is.EqualTo(4));
             Assert.That(seating[1].Length, Is.EqualTo(4));
@@ -80,7 +82,8 @@ namespace SeatingHelper.Tests
                     new Assignment("Valerie", "3")
                 }
             };
-            bool success = SeatingCalculation.TryLongerRowsPieceSeating(simpleStraight, 2, 5, out Assignment[][] seating);
+            SeatingCalculator seatingCalculator = new SeatingCalculator(simpleStraight, 2, 5);
+            bool success = seatingCalculator.TryLongerRowsPieceSeating(out Assignment[][] seating);
             Assert.That(success, Is.True);
             Assert.That(seating[0].Length, Is.EqualTo(5));
             Assert.That(seating[1].Length, Is.EqualTo(4));
@@ -104,7 +107,8 @@ namespace SeatingHelper.Tests
                     new Assignment("Hans", "1", 6)
                 }
             };
-            bool success = SeatingCalculation.TryLongerRowsPieceSeating(allSamePart, 1, 6, out Assignment[][] seating);
+            SeatingCalculator seatingCalculator = new SeatingCalculator(allSamePart, 1, 6);
+            bool success = seatingCalculator.TryLongerRowsPieceSeating(out Assignment[][] seating);
             Assert.That(success, Is.True);
             Assert.That(seating[0].Length, Is.EqualTo(6));
             Assert.That(seating[0][0].PlayerName, Is.EqualTo("Nancy"));
@@ -131,7 +135,8 @@ namespace SeatingHelper.Tests
                     new Assignment("Hans", "1")
                 }
             };
-            bool success = SeatingCalculation.TryLongerRowsPieceSeating(allSamePart, 1, 6, out Assignment[][] seating);
+            SeatingCalculator seatingCalculator = new SeatingCalculator(allSamePart, 1, 6);
+            bool success = seatingCalculator.TryLongerRowsPieceSeating(out Assignment[][] seating);
             Assert.That(success, Is.True);
             Assert.That(seating[0].Length, Is.EqualTo(6));
             Assert.That(seating[0][0].PlayerName, Is.EqualTo("Nancy"));
