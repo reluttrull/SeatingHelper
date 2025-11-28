@@ -24,9 +24,9 @@ namespace SeatingHelper
     public partial class MainWindow : Window
     {
         private List<string> players = new List<string>();
-        private List<string> scoreOrder = new List<string>();
         private List<Piece> importedPieces = new List<Piece>();
         private List<Assignment[][]> seatingCharts = new List<Assignment[][]>();
+        private List<string>? scoreOrder = null;
         public MainWindow()
         {
             InitializeComponent();
@@ -120,10 +120,12 @@ namespace SeatingHelper
                     importedPieces.Add(pieceToAdd);
                 }
 
-                scoreOrder.Clear();
-                ExcelWorksheet scoreOrderWorksheet = package.Workbook.Worksheets.Where(w => w.Name.Trim().Equals("SCORE ORDER", StringComparison.CurrentCultureIgnoreCase)).First();
+                ExcelWorksheet scoreOrderWorksheet = package.Workbook.Worksheets
+                        .Where(w => w.Name.Trim().Replace(" ", string.Empty).Equals("SCOREORDER", StringComparison.CurrentCultureIgnoreCase))
+                        .First();
                 if (scoreOrderWorksheet is not null)
                 {
+                    scoreOrder = new();
                     for (int row = 1; row <= scoreOrderWorksheet.Rows.Count(); row++)
                     {
                         scoreOrder.Add(scoreOrderWorksheet.Cells[row, 1].GetValue<string>());
@@ -167,6 +169,7 @@ namespace SeatingHelper
             foreach (Piece piece in importedPieces)
             {
                 SeatingCalculator seatingCalculator = new SeatingCalculator(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0);
+                if (scoreOrder is not null) seatingCalculator.ScoreOrder = scoreOrder;
                 bool blockSuccess, straightSuccess;
                 if (tryBlockFirst.IsChecked == true)
                 {

@@ -96,7 +96,7 @@ namespace SeatingHelper.Tests
         {
             Piece allSamePart = new Piece()
             {
-                Name = "Simple Left Straight",
+                Name = "Testing full priority",
                 Assignments = new List<Assignment>()
                 {
                     new Assignment("Roger", "1", 2),
@@ -124,7 +124,7 @@ namespace SeatingHelper.Tests
         {
             Piece allSamePart = new Piece()
             {
-                Name = "Simple Left Straight",
+                Name = "Testing partial priority",
                 Assignments = new List<Assignment>()
                 {
                     new Assignment("Roger", "1", 2),
@@ -142,6 +142,34 @@ namespace SeatingHelper.Tests
             Assert.That(seating[0][0].PlayerName, Is.EqualTo("Nancy"));
             Assert.That(seating[0][1].PlayerName, Is.EqualTo("Roger"));
             Assert.That(seating[0][2].PlayerName, Is.EqualTo("Malik"));
+        }
+
+        [Test]
+        public void TestScoreOrder()
+        {
+            Piece differentInstruments = new Piece()
+            {
+                Name = "All on different instruments",
+                Assignments = new List<Assignment>()
+                {
+                    new Assignment("Roger", "Violin", 2),
+                    new Assignment("Nancy", "Violin", 1),
+                    new Assignment("Fred", "Flute"),
+                    new Assignment("Malik", "Tuba"),
+                    new Assignment("Jenny", "Flute", 1),
+                    new Assignment("Hans", "Cello")
+                }
+            };
+            SeatingCalculator seatingCalculator = new SeatingCalculator(differentInstruments, 1, 6);
+            seatingCalculator.ScoreOrder = new List<string>() { "Flute", "Clarinet", "Trumpet", "Horn", "Trombone", "Tuba", "Violin", "Viola", "Cello" };
+            bool success = seatingCalculator.TryLongerRowsPieceSeating(out Assignment[][] seating);
+            Assert.That(success, Is.True);
+            Assert.That(seating[0].Length, Is.EqualTo(6));
+            Assert.That(seating[0][0].PlayerName, Is.EqualTo("Jenny"));
+            Assert.That(seating[0][1].PlayerName, Is.EqualTo("Fred"));
+            Assert.That(seating[0][2].PlayerName, Is.EqualTo("Malik"));
+            Assert.That(seating[0][3].PlayerName, Is.EqualTo("Nancy"));
+            Assert.That(seating[0][5].PlayerName, Is.EqualTo("Hans"));
         }
     }
 }

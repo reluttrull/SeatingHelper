@@ -11,6 +11,7 @@ namespace SeatingHelper
         public Piece Piece {  get; set; }
         public int Rows { get; set; }
         public int MaxRowWidth { get; set; }
+        public List<string>? ScoreOrder { get; set; } = null;
         public SeatingCalculator(Piece piece, int rows, int maxRowWidth) 
         {
             Piece = piece;
@@ -21,7 +22,18 @@ namespace SeatingHelper
         {
             seating = new Assignment[Rows][];
             List<Assignment[]> temporarySeating = [];
-            var groups = Piece.Assignments.OrderBy(a => a.Priority).GroupBy(a => a.PartName).OrderBy(g => g.Key.Length).ThenBy(g => g.Key).ToList();
+            List<IGrouping<string, Assignment>> groups = new();
+            if (ScoreOrder is not null) groups = Piece.Assignments
+                    .OrderBy(a => a.Priority)
+                    .GroupBy(a => a.PartName)
+                    .OrderBy(g => ScoreOrder.IndexOf(g.Key))
+                    .ToList();
+            else groups = Piece.Assignments
+                    .OrderBy(a => a.Priority)
+                    .GroupBy(a => a.PartName)
+                    .OrderBy(g => g.Key.Length)
+                    .ThenBy(g => g.Key)
+                    .ToList();
 
             int row = 0;
             while (groups.Count > 0)
@@ -47,7 +59,18 @@ namespace SeatingHelper
         {
             seating = new Assignment[Rows][];
             int smallestRowWidth = (int)Math.Ceiling((double)Piece.Assignments.Count / Rows);
-            var groups = Piece.Assignments.OrderBy(a => a.Priority).GroupBy(a => a.PartName).OrderBy(g => g.Key.Length).ThenBy(g => g.Key).ToList();
+            List<IGrouping<string, Assignment>> groups = new();
+            if (ScoreOrder is not null) groups = Piece.Assignments
+                    .OrderBy(a => a.Priority)
+                    .GroupBy(a => a.PartName)
+                    .OrderBy(g => ScoreOrder.IndexOf(g.Key))
+                    .ToList();
+            else groups = Piece.Assignments
+                    .OrderBy(a => a.Priority)
+                    .GroupBy(a => a.PartName)
+                    .OrderBy(g => g.Key.Length)
+                    .ThenBy(g => g.Key)
+                    .ToList();
 
             List<Assignment[]> temporarySeating = [];
             while (groups.Count > 0)
