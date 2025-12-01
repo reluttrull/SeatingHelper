@@ -6,12 +6,14 @@ namespace SeatingHelper.Model
 {
     public class ChartListViewItem
     {
+        public string Name { get; set; }
         public int Rows { get; set; }
         public long Players { get; set; }
         public Assignment[][] Chart { get; set; }
 
-        public ChartListViewItem(Assignment[][] chart)
+        public ChartListViewItem(Assignment[][] chart, string name)
         {
+            Name = name;
             if (chart is null) chart = [];
             Chart = new Assignment[chart.Length][];
             for (int i = 0; i < chart.Length; i++)
@@ -21,6 +23,7 @@ namespace SeatingHelper.Model
             }
             Rows = chart.Length;
             Players = chart.Sum(row => row.Length);
+            Name = name;
         }
     }
 }

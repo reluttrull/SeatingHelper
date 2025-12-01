@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:SeatingHelper"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Seating Helper" Height="450" Width="800">
+        Title="Seating Helper" Height="450" Width="1000">
     <Grid>
         <TextBox HorizontalAlignment="Left" Margin="37,16,0,0" TextWrapping="NoWrap" Text="Filename" VerticalAlignment="Top" Width="332" Name="filenameDisplay"/>
         <Button Content="Choose File (.xls, .xlsx)" HorizontalAlignment="Left" Margin="37,51,0,0" VerticalAlignment="Top" Click="Button_Choose_File_Click"/>
@@ -28,6 +28,7 @@
                 </Style>
             </DataGrid.Resources>
             <DataGrid.Columns>
+                <DataGridTextColumn Width="300" Header="Name" Binding="{Binding Name}" />
                 <DataGridTextColumn Width="100" Header="Rows" Binding="{Binding Rows}"/>
                 <DataGridTextColumn Width="100" Header="Players" Binding="{Binding Players}"/>
             </DataGrid.Columns>

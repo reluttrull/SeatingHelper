@@ -65,9 +65,9 @@ namespace SeatingHelper
             }
         }
 
-        private void PopulateListView(Assignment[][] seating)
+        private void PopulateListView(Assignment[][] seating, string pieceName)
         {
-            chartListViewItems.Add(new ChartListViewItem(seating));
+            chartListViewItems.Add(new ChartListViewItem(seating, pieceName));
         }
 
         private void DisplayPieceSeating(Assignment[][] seating)
@@ -179,28 +179,28 @@ namespace SeatingHelper
                     if (blockSuccess)
                     {
                         seatingCharts.Add(blockSeating);
-                        PopulateListView(blockSeating);
+                        PopulateListView(blockSeating, piece.Name);
                         continue;
                     }
                     else if (blockSeating.Length > numRows.Value) // if overflow, try to condense block
                     {
                         blockSeating = seatingCalculator.CondenseRows(blockSeating);
                         seatingCharts.Add(blockSeating);
-                        PopulateListView(blockSeating);
+                        PopulateListView(blockSeating, piece.Name);
                         continue;
                     }
                     straightSuccess = seatingCalculator.TryLongerRowsPieceSeating(out Assignment[][] straightSeating);
                     if (straightSuccess)
                     {
                         seatingCharts.Add(straightSeating);
-                        PopulateListView(straightSeating);
+                        PopulateListView(straightSeating, piece.Name);
                         continue;
                     }
                     else if (straightSeating.Length > numRows.Value) // if overflow, try to condense block
                     {
                         straightSeating = seatingCalculator.CondenseRows(straightSeating);
                         seatingCharts.Add(straightSeating);
-                        PopulateListView(straightSeating);
+                        PopulateListView(straightSeating, piece.Name);
                         continue;
                     }
                 }
@@ -210,28 +210,28 @@ namespace SeatingHelper
                     if (straightSuccess)
                     {
                         seatingCharts.Add(straightSeating);
-                        PopulateListView(straightSeating);
+                        PopulateListView(straightSeating, piece.Name);
                         continue;
                     }
                     else if (straightSeating.Length > numRows.Value) // if overflow, try to condense block
                     {
                         straightSeating = seatingCalculator.CondenseRows(straightSeating);
                         seatingCharts.Add(straightSeating);
-                        PopulateListView(straightSeating);
+                        PopulateListView(straightSeating, piece.Name);
                         continue;
                     }
                     blockSuccess = seatingCalculator.TryBlockPieceSeating(out Assignment[][] blockSeating);
                     if (blockSuccess)
                     {
                         seatingCharts.Add(blockSeating);
-                        PopulateListView(blockSeating);
+                        PopulateListView(blockSeating, piece.Name);
                         continue;
                     }
                     else if (blockSeating.Length > numRows.Value) // if overflow, try to condense block
                     {
                         blockSeating = seatingCalculator.CondenseRows(blockSeating);
                         seatingCharts.Add(blockSeating);
-                        PopulateListView(blockSeating);
+                        PopulateListView(blockSeating, piece.Name);
                         continue;
                     }
                 }
