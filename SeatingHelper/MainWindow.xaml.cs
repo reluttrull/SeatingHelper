@@ -26,7 +26,7 @@ namespace SeatingHelper
         private List<string> players = new List<string>();
         private List<Piece> importedPieces = new List<Piece>();
         private List<Assignment[][]> seatingCharts = new List<Assignment[][]>();
-        private List<ChartListViewItem> chartListViewItems = new List<ChartListViewItem>();
+        private ObservableCollection<ChartListViewItem> chartListViewItems = new();
         private List<string>? scoreOrder = null;
         public MainWindow()
         {
@@ -123,7 +123,7 @@ namespace SeatingHelper
 
                 ExcelWorksheet scoreOrderWorksheet = package.Workbook.Worksheets
                         .Where(w => w.Name.Trim().Replace(" ", string.Empty).Equals("SCOREORDER", StringComparison.CurrentCultureIgnoreCase))
-                        .First();
+                        .FirstOrDefault();
                 if (scoreOrderWorksheet is not null)
                 {
                     scoreOrder = new();
@@ -188,6 +188,10 @@ namespace SeatingHelper
                         seatingCharts.Add(straightSeating);
                         PopulateListView(straightSeating);
                         continue;
+                    }
+                    else if (blockSeating.Length > numRows.Value) // neither worked, if overflow, try to condense block
+                    {
+                        blockSeating = seatingCalculator.CondenseRows(blockSeating);
                     }
                 }
                 else

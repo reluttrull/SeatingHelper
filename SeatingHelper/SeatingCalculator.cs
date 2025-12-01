@@ -177,5 +177,32 @@ namespace SeatingHelper
 
             return true;
         }
+
+        public Assignment[][] CondenseRows(Assignment[][] blockSeating)
+        {
+            int currentRow = Rows - 1;
+            List<Assignment> assignmentsToMove = blockSeating.Where((row, index) => index >= Rows).SelectMany(row => row).Reverse().ToList();
+            foreach (Assignment assignmentToMove in assignmentsToMove)
+            {
+                int index = -1;
+                while (index < 0 && currentRow >= 0)
+                {
+                    index = GetLastOpenSeat(blockSeating[currentRow]);
+                    if (index < 0) currentRow--;
+                }
+                if (currentRow < 0) break;
+                blockSeating[currentRow][index] = assignmentToMove;
+            }
+            return blockSeating;
+        }
+
+        private int GetLastOpenSeat(Assignment[] row)
+        {
+            for (int i = row.Length - 1; i >= 0; i--)
+            {
+                if (row[i] is null) return i;
+            }
+            return -1;
+        }
     }
 }
