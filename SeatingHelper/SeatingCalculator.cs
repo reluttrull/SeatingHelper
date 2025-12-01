@@ -50,7 +50,6 @@ namespace SeatingHelper
                 groups.RemoveAll(g => testGroups.Any(tg => tg.Key == g.Key));
                 row++;
             }
-            if (temporarySeating.Count > Rows) return false;
             seating = [.. temporarySeating];
 
             if (seating.Length == 0 || seating.Length > Rows) return false;
@@ -185,6 +184,10 @@ namespace SeatingHelper
         {
             int currentRow = Rows - 1;
             List<Assignment> assignmentsToMove = blockSeating.Where((row, index) => index >= Rows).SelectMany(row => row).Reverse().ToList();
+            for (int i = 0; i < Rows; i++)
+            {
+                Array.Resize(ref blockSeating[i], MaxRowWidth);
+            }
             foreach (Assignment assignmentToMove in assignmentsToMove)
             {
                 int index = -1;
@@ -196,7 +199,8 @@ namespace SeatingHelper
                 if (currentRow < 0) break;
                 blockSeating[currentRow][index] = assignmentToMove;
             }
-            return blockSeating;
+            Array.Resize(ref blockSeating, Rows);
+            return [..blockSeating.Select(row => row.Where(item => item != null).ToArray())];
         }
 
         private int GetLastOpenSeat(Assignment[] row)

@@ -182,6 +182,13 @@ namespace SeatingHelper
                         PopulateListView(blockSeating);
                         continue;
                     }
+                    else if (blockSeating.Length > numRows.Value) // if overflow, try to condense block
+                    {
+                        blockSeating = seatingCalculator.CondenseRows(blockSeating);
+                        seatingCharts.Add(blockSeating);
+                        PopulateListView(blockSeating);
+                        continue;
+                    }
                     straightSuccess = seatingCalculator.TryLongerRowsPieceSeating(out Assignment[][] straightSeating);
                     if (straightSuccess)
                     {
@@ -189,10 +196,13 @@ namespace SeatingHelper
                         PopulateListView(straightSeating);
                         continue;
                     }
-                    //else if (blockSeating.Length > numRows.Value) // neither worked, if overflow, try to condense block
-                    //{
-                    //    blockSeating = seatingCalculator.CondenseRows(blockSeating);
-                    //}
+                    else if (straightSeating.Length > numRows.Value) // if overflow, try to condense block
+                    {
+                        straightSeating = seatingCalculator.CondenseRows(straightSeating);
+                        seatingCharts.Add(straightSeating);
+                        PopulateListView(straightSeating);
+                        continue;
+                    }
                 }
                 else
                 {
@@ -203,9 +213,23 @@ namespace SeatingHelper
                         PopulateListView(straightSeating);
                         continue;
                     }
+                    else if (straightSeating.Length > numRows.Value) // if overflow, try to condense block
+                    {
+                        straightSeating = seatingCalculator.CondenseRows(straightSeating);
+                        seatingCharts.Add(straightSeating);
+                        PopulateListView(straightSeating);
+                        continue;
+                    }
                     blockSuccess = seatingCalculator.TryBlockPieceSeating(out Assignment[][] blockSeating);
                     if (blockSuccess)
                     {
+                        seatingCharts.Add(blockSeating);
+                        PopulateListView(blockSeating);
+                        continue;
+                    }
+                    else if (blockSeating.Length > numRows.Value) // if overflow, try to condense block
+                    {
+                        blockSeating = seatingCalculator.CondenseRows(blockSeating);
                         seatingCharts.Add(blockSeating);
                         PopulateListView(blockSeating);
                         continue;
