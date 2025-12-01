@@ -52,6 +52,8 @@ namespace SeatingHelper
             }
             if (temporarySeating.Count > Rows) return false;
             seating = [.. temporarySeating];
+
+            if (seating.Length == 0 || seating.Length > Rows) return false;
             return true;
         }
 
@@ -175,6 +177,7 @@ namespace SeatingHelper
             }
             seating = [..temporarySeating];
 
+            if (seating.Length == 0 || seating.Length > Rows) return false;
             return true;
         }
 

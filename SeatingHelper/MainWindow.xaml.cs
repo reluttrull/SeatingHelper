@@ -189,10 +189,10 @@ namespace SeatingHelper
                         PopulateListView(straightSeating);
                         continue;
                     }
-                    else if (blockSeating.Length > numRows.Value) // neither worked, if overflow, try to condense block
-                    {
-                        blockSeating = seatingCalculator.CondenseRows(blockSeating);
-                    }
+                    //else if (blockSeating.Length > numRows.Value) // neither worked, if overflow, try to condense block
+                    //{
+                    //    blockSeating = seatingCalculator.CondenseRows(blockSeating);
+                    //}
                 }
                 else
                 {
