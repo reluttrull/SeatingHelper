@@ -72,18 +72,8 @@ namespace SeatingHelper
 
         private void DisplayPieceSeating(Assignment[][] seating)
         {
-            StringBuilder displaySB = new StringBuilder();
-            for (int i = 0; i < seating.Length; i++) // row
-            {
-                displaySB.Append($"Row {i + 1}: ");
-                for (int j = 0; j < seating[i].Length; j++) // seat
-                {
-                    displaySB.Append($"  [{seating[i][j].PartName}]: {seating[i][j].PlayerName}  ");
-                }
-                displaySB.AppendLine();
-            }
-            DisplayWindow display = new(displaySB.ToString());
-            display.Show();
+            ChartDisplayWindow chartDisplayWindow = new(seating);
+            chartDisplayWindow.Show();
         }
 
         private void CountPlayers()
