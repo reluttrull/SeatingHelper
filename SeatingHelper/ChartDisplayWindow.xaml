@@ -3,9 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dd="urn:gong-wpf-dragdrop"
         xmlns:local="clr-namespace:SeatingHelper"
         mc:Ignorable="d"
-        Title="ChartDisplayWindow" Height="450" Width="800">
+        Title="ChartDisplayWindow" Height="500" Width="1000">
     <Grid>
         <ItemsControl ItemsSource="{Binding SeatingChart}">
             <ItemsControl.ItemTemplate>
@@ -16,7 +17,10 @@
                         <TextBlock Text="{Binding RowNumber}" FontWeight="Bold" FontSize="16" Margin="0,0,0,5"/>
 
                         <!-- Inner ItemsControl bound to the InnerList of the current OuterItem -->
-                        <ItemsControl ItemsSource="{Binding InnerList}">
+                        <ItemsControl ItemsSource="{Binding InnerList}"
+                                      HorizontalAlignment="Stretch"
+                                      dd:DragDrop.IsDragSource="True"
+                                      dd:DragDrop.IsDropTarget="True">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <!-- Arranges items in a single horizontal line -->
@@ -26,9 +30,9 @@
                             <ItemsControl.ItemTemplate>
                                 <!-- DataTemplate for each InnerItem -->
                                 <DataTemplate>
-                                    <Border BorderBrush="LightGray" BorderThickness="1" Padding="5" Margin="10,2,0,2">
+                                    <Border BorderBrush="LightGray" BorderThickness="1" Padding="5">
                                         <!-- Display the InnerItem Name -->
-                                        <TextBlock>
+                                        <TextBlock Width="85" TextTrimming="CharacterEllipsis" FontSize="10">
                                             <TextBlock.Text>
                                                 <MultiBinding StringFormat="{}{0}: {1}">
                                                     <Binding Path="PartName" />
@@ -44,5 +48,6 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <Button x:Name="Save" Margin="600,343,46,59" Click="SaveButton_Click" Content="Save Changes" />
     </Grid>
 </Window>

@@ -70,10 +70,21 @@ namespace SeatingHelper
             chartListViewItems.Add(new ChartListViewItem(seating, pieceName));
         }
 
-        private void DisplayPieceSeating(Assignment[][] seating)
+        private Assignment[][]? DisplayPieceSeating(Assignment[][] seating, string pieceName) // if changes made, pass back changed chart
         {
             ChartDisplayWindow chartDisplayWindow = new(seating);
-            chartDisplayWindow.Show();
+            if (chartDisplayWindow.ShowDialog() == true)
+            {
+                int index = importedPieces.FindIndex(piece => piece.Name == pieceName);
+                if (index < 0) return null;  // todo: error handling
+                seatingCharts[index] = new Assignment[chartDisplayWindow.SeatingChart.Count][];
+                for (int i = 0; i < chartDisplayWindow.SeatingChart.Count; i++)
+                {
+                    seatingCharts[index][i] = [.. chartDisplayWindow.SeatingChart[i].InnerList];
+                }
+                return seatingCharts[index];
+            }
+            return null;
         }
 
         private void CountPlayers()
@@ -149,7 +160,11 @@ namespace SeatingHelper
             }
             if (chartItem?.Chart is not null)
             {
-                DisplayPieceSeating(chartItem.Chart);
+                Assignment[][]? changedChart = DisplayPieceSeating(chartItem.Chart, chartItem.Name);
+                if (changedChart is not null)
+                {
+                    chartItem.Chart = changedChart;
+                }
             }
         }
 

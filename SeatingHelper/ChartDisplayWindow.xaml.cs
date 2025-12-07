@@ -32,14 +32,10 @@ namespace SeatingHelper
             }
             DataContext = this;
         }
-    }
-    public class DisplayRow
-    {
-        public int RowNumber { get; set; }
-        public ObservableCollection<Assignment> InnerList { get; set; }
-        public DisplayRow(Assignment[] row)
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            InnerList = new ObservableCollection<Assignment>(row);
+            DialogResult = true;
         }
     }
 }
