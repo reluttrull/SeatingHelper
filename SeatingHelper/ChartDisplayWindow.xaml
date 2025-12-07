@@ -7,47 +7,54 @@
         xmlns:local="clr-namespace:SeatingHelper"
         mc:Ignorable="d"
         Title="ChartDisplayWindow" Height="500" Width="1000">
-    <Grid>
-        <ItemsControl ItemsSource="{Binding SeatingChart}">
-            <ItemsControl.ItemTemplate>
-                <!-- DataTemplate for each OuterItem -->
-                <DataTemplate>
-                    <StackPanel Margin="0,5,0,5">
-                        <!-- Display the GroupName -->
-                        <TextBlock Text="{Binding RowNumber}" FontWeight="Bold" FontSize="16" Margin="0,0,0,5"/>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ItemsControl Grid.Row="0" ItemsSource="{Binding SeatingChart}">
+                <ItemsControl.ItemTemplate>
+                    <!-- DataTemplate for each OuterItem -->
+                    <DataTemplate>
+                        <StackPanel Margin="0,5,0,5">
+                            <!-- Display the GroupName -->
+                            <TextBlock Text="{Binding RowNumber}" FontWeight="Bold" FontSize="16" Margin="0,0,0,5"/>
 
-                        <!-- Inner ItemsControl bound to the InnerList of the current OuterItem -->
-                        <ItemsControl ItemsSource="{Binding InnerList}"
+                            <!-- Inner ItemsControl bound to the InnerList of the current OuterItem -->
+                            <ItemsControl ItemsSource="{Binding InnerList}"
                                       HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Stretch"
                                       dd:DragDrop.IsDragSource="True"
                                       dd:DragDrop.IsDropTarget="True">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <!-- Arranges items in a single horizontal line -->
-                                    <StackPanel Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <!-- DataTemplate for each InnerItem -->
-                                <DataTemplate>
-                                    <Border BorderBrush="LightGray" BorderThickness="1" Padding="5">
-                                        <!-- Display the InnerItem Name -->
-                                        <TextBlock Width="85" TextTrimming="CharacterEllipsis" FontSize="10">
-                                            <TextBlock.Text>
-                                                <MultiBinding StringFormat="{}{0}: {1}">
-                                                    <Binding Path="PartName" />
-                                                    <Binding Path="PlayerName" />
-                                                </MultiBinding>
-                                            </TextBlock.Text>
-                                        </TextBlock>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <Button x:Name="Save" Margin="600,343,46,59" Click="SaveButton_Click" Content="Save Changes" />
-    </Grid>
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <!-- Arranges items in a single horizontal line -->
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <!-- DataTemplate for each InnerItem -->
+                                    <DataTemplate>
+                                        <Border BorderBrush="LightGray" BorderThickness="3" Padding="10">
+                                            <!-- Display the InnerItem Name -->
+                                            <TextBlock Width="85" Height="15" TextTrimming="CharacterEllipsis" FontSize="10">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0}: {1}">
+                                                        <Binding Path="PartName" />
+                                                        <Binding Path="PlayerName" />
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Grid.Row="1" Width="200" x:Name="Save" Click="SaveButton_Click" Content="Save Changes" />
+        </Grid>
+    </ScrollViewer>
 </Window>
