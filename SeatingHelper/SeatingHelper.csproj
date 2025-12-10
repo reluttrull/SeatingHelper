@@ -13,7 +13,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\basicTemplateExample.png" />
     <None Remove="Images\Info-Button.png" />
+    <None Remove="Images\scoreOrderExample.png" />
+    <None Remove="Images\scoreOrderTemplateExample.png" />
     <None Remove="Templates\SeatingTemplate.xlsx" />
     <None Remove="Templates\SeatingTemplateWithScoreOrder.xlsx" />
   </ItemGroup>
@@ -26,9 +29,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\basicTemplateExample.png" />
     <Resource Include="Images\Info-Button.png" />
-    <Resource Include="Templates\SeatingTemplate.xlsx" />
-    <Resource Include="Templates\SeatingTemplateWithScoreOrder.xlsx" />
+    <Resource Include="Images\scoreOrderExample.png" />
+    <Resource Include="Images\scoreOrderTemplateExample.png" />
+    <EmbeddedResource Include="Templates\SeatingTemplate.xlsx" />
+    <EmbeddedResource Include="Templates\SeatingTemplateWithScoreOrder.xlsx" />
   </ItemGroup>
 
 </Project>

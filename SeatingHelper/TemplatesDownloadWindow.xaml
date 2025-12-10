@@ -1,0 +1,30 @@
+﻿<Window x:Class="SeatingHelper.TemplatesDownloadWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SeatingHelper"
+        mc:Ignorable="d"
+        Title="TemplatesDownloadWindow" Height="450" Width="800">
+    <StackPanel Orientation="Horizontal">
+        <Grid Width="300">
+            <TextBlock Width="220" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,10,0,0"
+                   FontSize="24" Grid.ColumnSpan="2">Basic Template</TextBlock>
+            <TextBlock Width="220" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,64,0,0"
+                   FontStyle="Italic" Grid.ColumnSpan="2">(Recommended if your part names are simply numbers)</TextBlock>
+            <Image Source="/Images/basicTemplateExample.png" Width="220" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,140,0,0" Grid.ColumnSpan="2"/>
+            <Button Content="Download Basic Template" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="66,327,0,0" Grid.ColumnSpan="2" Click="DownloadBasicButton_Click" />
+        </Grid>
+        <Border BorderBrush="Gray" BorderThickness="2,0,0,0" Margin="5,0,5,0"  />
+        <Grid Width="500">
+            <TextBlock Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"
+                   FontSize="24" Grid.Column="1">Template with Score Order</TextBlock>
+            <TextBlock Width="3000" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,64,0,0"
+                   FontStyle="Italic" Grid.Column="1">(Recommended for all other cases)</TextBlock>
+            <Image Source="/Images/scoreOrderTemplateExample.png" Width="280" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,140,0,0" Grid.Column="1"/>
+            <Image Source="/Images/scoreOrderExample.png" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="320,86,0,0" Grid.Column="1"/>
+            <Button Content="Download Template with Score Order" Width="280" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,327,0,0" Grid.Column="1" Click="DownloadScoreOrderButton_Click" />
+            <Button Content="Cancel" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="366,369,0,0" Style="{DynamicResource MaterialDesignRaisedLightButton}" Click="CancelButton_Click" />
+        </Grid>
+    </StackPanel>
+</Window>

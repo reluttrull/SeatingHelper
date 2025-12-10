@@ -291,5 +291,11 @@ namespace SeatingHelper
                 }
             }
         }
+
+        private void GetTemplatesButton_Click(object sender, RoutedEventArgs e)
+        {
+            TemplatesDownloadWindow templatesDownloadWindow = new TemplatesDownloadWindow();
+            templatesDownloadWindow.Show();
+        }
     }
 }

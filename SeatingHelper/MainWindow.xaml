@@ -10,20 +10,20 @@
         mc:Ignorable="d"
         Title="Seating Helper" Height="450" Width="1000">
     <Grid>
-        <TextBox HorizontalAlignment="Left" Margin="37,16,0,0" TextWrapping="NoWrap" Text="Filename" VerticalAlignment="Top" Width="332" Name="filenameDisplay"/>
-        <Button Content="Choose File (.xls, .xlsx)" HorizontalAlignment="Left" Margin="37,51,0,0" VerticalAlignment="Top" Click="Button_Choose_File_Click"/>
-        <Image Source="/Images/Info-Button.png" HorizontalAlignment="Left" Margin="215,54,0,0" VerticalAlignment="Top" Width="20" ToolTip="All of the unique people across all the pieces in your file." />
-        <Label Content="Total # of players: " HorizontalAlignment="Left" Margin="235,54,0,0" VerticalAlignment="Top" />
-        <TextBox HorizontalAlignment="Left" Margin="350,54,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="39" Name="numPlayers" />
-        <Image Source="/Images/Info-Button.png" HorizontalAlignment="Left" Margin="37,95,0,0" VerticalAlignment="Top" Width="20" ToolTip="The number of rows you want to use across all the pieces (some may use fewer rows)." />
-        <Label Content="# of rows: " HorizontalAlignment="Left" Margin="57,95,0,0" VerticalAlignment="Top" />
-        <xctk:IntegerUpDown Value="4" HorizontalAlignment="Left" Margin="136,98,0,0" VerticalAlignment="Top" Name="numRows" Minimum="1" Maximum="8" Increment="1" Width="40" Height="20" ValueChanged="numRows_ValueChanged" />
-        <Image Source="/Images/Info-Button.png" HorizontalAlignment="Left" Margin="37,135,0,0" VerticalAlignment="Top" Width="20" ToolTip="The number of seats wide that each row can have (some may use fewer seats)." />
-        <Label Content="Max row width: " HorizontalAlignment="Left" Margin="57,135,0,0" VerticalAlignment="Top" />
-        <xctk:IntegerUpDown Value="12" HorizontalAlignment="Left" Margin="170,139,0,0" VerticalAlignment="Top" x:Name="maxRowWidth" Minimum="4" Maximum="15" Increment="1" Width="40" Height="20" />
-        <Image Source="/Images/Info-Button.png" HorizontalAlignment="Left" Margin="37,175,0,0" VerticalAlignment="Top" Width="20" 
+        <TextBox HorizontalAlignment="Left" Margin="37,16,0,0" TextWrapping="WrapWithOverflow" Text="Filename" VerticalAlignment="Top" Width="250" Name="filenameDisplay"/>
+        <Button Content="I need a starter template!" Style="{DynamicResource MaterialDesignRaisedLightButton}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="238,91,0,0" Click="GetTemplatesButton_Click" />
+        <Button Content="Choose File (.xls, .xlsx)" HorizontalAlignment="Left" Margin="37,91,0,0" VerticalAlignment="Top" Click="Button_Choose_File_Click"/>
+        <Label Content="Total # of players in file: " HorizontalAlignment="Left" Margin="37,54,0,0" VerticalAlignment="Top" />
+        <TextBox HorizontalAlignment="Left" Margin="180,54,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="40" Name="numPlayers" />
+        <Image Source="/Images/Info-Button.png" HorizontalAlignment="Left" Margin="37,139,0,0" VerticalAlignment="Top" Width="20" ToolTip="The number of rows you want to use across all the pieces (some may use fewer rows)." />
+        <Label Content="# of rows: " HorizontalAlignment="Left" Margin="57,139,0,0" VerticalAlignment="Top" />
+        <xctk:IntegerUpDown Value="4" HorizontalAlignment="Left" Margin="136,142,0,0" VerticalAlignment="Top" Name="numRows" Minimum="1" Maximum="8" Increment="1" Width="40" Height="20" ValueChanged="numRows_ValueChanged" />
+        <Image Source="/Images/Info-Button.png" HorizontalAlignment="Left" Margin="37,179,0,0" VerticalAlignment="Top" Width="20" ToolTip="The number of seats wide that each row can have (some may use fewer seats)." />
+        <Label Content="Max row width: " HorizontalAlignment="Left" Margin="57,179,0,0" VerticalAlignment="Top" />
+        <xctk:IntegerUpDown Value="12" HorizontalAlignment="Left" Margin="170,183,0,0" VerticalAlignment="Top" x:Name="maxRowWidth" Minimum="4" Maximum="15" Increment="1" Width="40" Height="20" />
+        <Image Source="/Images/Info-Button.png" HorizontalAlignment="Left" Margin="37,219,0,0" VerticalAlignment="Top" Width="20" 
                ToolTip="Block seating will allow a part along the left or right side to be blocked across two rows (e.g. 4 players might be divided as 2 in one row and 2 in the next)." />
-        <CheckBox x:Name="tryBlockFirst" Content="Try block seating first" HorizontalAlignment="Left" Margin="57,175,0,0" VerticalAlignment="Top" />
+        <CheckBox x:Name="tryBlockFirst" Content="Try block seating first" HorizontalAlignment="Left" Margin="57,219,0,0" VerticalAlignment="Top" />
         <Button Content="Generate charts!" HorizontalAlignment="Left" Margin="37,337,0,0" VerticalAlignment="Top" Click="GenerateButton_Click" ToolTip="Generate seating for imported file based on the above options." />
         <Button x:Name="exportButton" Content="Export charts" HorizontalAlignment="Left" Margin="253,337,0,0" VerticalAlignment="Top" IsEnabled="False" Click="ExportButton_Click" ToolTip="Export results to spreadsheet." />
         <DataGrid x:Name="chartsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="465,0,0,0" AutoGenerateColumns="False" HeadersVisibility="Column" IsReadOnly="True" >
