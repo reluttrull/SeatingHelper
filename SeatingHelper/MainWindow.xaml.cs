@@ -133,6 +133,7 @@ namespace SeatingHelper
                     ExcelWorksheet? scoreOrderWorksheet = package.Workbook.Worksheets
                             .Where(w => w.Name.Trim().Replace(" ", string.Empty).Equals("SCOREORDER", StringComparison.CurrentCultureIgnoreCase))
                             .FirstOrDefault();
+                    scoreOrder = null;
                     if (scoreOrderWorksheet is not null)
                     {
                         scoreOrder = new();
