@@ -10,11 +10,11 @@
         mc:Ignorable="d"
         Title="Seating Helper" Height="450" Width="1000">
     <Grid>
-        <TextBox HorizontalAlignment="Left" Margin="37,16,0,0" TextWrapping="WrapWithOverflow" Text="Filename" VerticalAlignment="Top" Width="250" Name="filenameDisplay"/>
+        <TextBox FontSize="12" HorizontalAlignment="Left" Margin="37,16,0,0" TextWrapping="NoWrap" Text="Filename" VerticalAlignment="Top" Width="380" Name="filenameDisplay"/>
         <Button Content="I need a starter template!" Style="{DynamicResource MaterialDesignRaisedLightButton}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="238,91,0,0" Click="GetTemplatesButton_Click" />
         <Button Content="Choose File (.xls, .xlsx)" HorizontalAlignment="Left" Margin="37,91,0,0" VerticalAlignment="Top" Click="Button_Choose_File_Click"/>
         <Label Content="Total # of players in file: " HorizontalAlignment="Left" Margin="37,54,0,0" VerticalAlignment="Top" />
-        <TextBox HorizontalAlignment="Left" Margin="180,54,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="40" Name="numPlayers" />
+        <TextBox HorizontalAlignment="Left" Margin="200,54,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="40" Name="numPlayers" />
         <Image Source="/Images/Info-Button.png" HorizontalAlignment="Left" Margin="37,139,0,0" VerticalAlignment="Top" Width="20" ToolTip="The number of rows you want to use across all the pieces (some may use fewer rows)." />
         <Label Content="# of rows: " HorizontalAlignment="Left" Margin="57,139,0,0" VerticalAlignment="Top" />
         <xctk:IntegerUpDown Value="4" HorizontalAlignment="Left" Margin="136,142,0,0" VerticalAlignment="Top" Name="numRows" Minimum="1" Maximum="8" Increment="1" Width="40" Height="20" ValueChanged="numRows_ValueChanged" />

@@ -73,10 +73,14 @@ namespace SeatingHelper
         private Assignment[][]? DisplayPieceSeating(Assignment[][] seating, string pieceName) // if changes made, pass back changed chart
         {
             ChartDisplayWindow chartDisplayWindow = new(seating);
-            if (chartDisplayWindow.ShowDialog() == true)
+            if (chartDisplayWindow.ShowDialog() == true) // "save" changes
             {
                 int index = importedPieces.FindIndex(piece => piece.Name == pieceName);
-                if (index < 0) return null;  // todo: error handling
+                if (index < 0)
+                {
+                    System.Windows.MessageBox.Show("Problem saving changes. Try starting with a new import.");
+                    return null;
+                }// todo: error handling
                 seatingCharts[index] = new Assignment[chartDisplayWindow.SeatingChart.Count][];
                 for (int i = 0; i < chartDisplayWindow.SeatingChart.Count; i++)
                 {
@@ -122,7 +126,7 @@ namespace SeatingHelper
                     importedPieces.Add(pieceToAdd);
                 }
 
-                ExcelWorksheet scoreOrderWorksheet = package.Workbook.Worksheets
+                ExcelWorksheet? scoreOrderWorksheet = package.Workbook.Worksheets
                         .Where(w => w.Name.Trim().Replace(" ", string.Empty).Equals("SCOREORDER", StringComparison.CurrentCultureIgnoreCase))
                         .FirstOrDefault();
                 if (scoreOrderWorksheet is not null)
@@ -164,6 +168,7 @@ namespace SeatingHelper
                 if (changedChart is not null)
                 {
                     chartItem.Chart = changedChart;
+                    System.Windows.MessageBox.Show("Changes saved.");
                 }
             }
         }
@@ -283,7 +288,7 @@ namespace SeatingHelper
                     {
                         package.SaveAs(stream);
                     }
-                    System.Windows.MessageBox.Show("File Created");
+                    System.Windows.MessageBox.Show($"File saved as {saveDialog.FileName}.");
                 }
                 catch (Exception ex)
                 {

@@ -57,6 +57,7 @@ namespace SeatingHelper
             if (saveDialog.ShowDialog() == true)
             {
                 File.Copy(tempFilePath, saveDialog.FileName, true);
+                MessageBox.Show($"File saved as {saveDialog.FileName}.");
             }
 
             File.Delete(tempFilePath);
