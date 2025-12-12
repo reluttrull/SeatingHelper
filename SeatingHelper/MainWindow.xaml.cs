@@ -1,7 +1,10 @@
 ﻿using Microsoft.Win32;
+using OfficeOpenXml;
 using SeatingHelper.Model;
 using System.Collections.ObjectModel;
 using System.Formats.Tar;
+using System.IO;
+using System.IO.Packaging;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,8 +16,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
-using OfficeOpenXml;
-using System.IO.Packaging;
 
 namespace SeatingHelper
 {
@@ -98,45 +99,68 @@ namespace SeatingHelper
 
         private void ParseSheets(string filepath)
         {
-            importedPieces.Clear();
-            ExcelPackage.License.SetNonCommercialPersonal("Ryan Luttrull");
-            using (var package = new ExcelPackage(filepath))
+            try
             {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets.First();
-                bool hasPriority = false;
-                int col = 1;
-                if (worksheet.Cells[1, 2].GetValue<string>().Equals("PRIORITY (OPTIONAL)", StringComparison.CurrentCultureIgnoreCase))
+                importedPieces.Clear();
+                ExcelPackage.License.SetNonCommercialPersonal("Ryan Luttrull");
+                using (var package = new ExcelPackage(filepath))
                 {
-                    hasPriority = true;
-                    col++;
-                }
-                while (col + 1 <= worksheet.Columns.Count())
-                {
-                    col++;
-                    Piece pieceToAdd = new Piece();
-                    pieceToAdd.Name = (string)worksheet.Cells[1, col].Value;
-                    for (int row = 2; row <= worksheet.Rows.Count(); row++)
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets.First();
+                    bool hasPriority = false;
+                    int col = 1;
+                    if (worksheet.Cells[1, 2].GetValue<string>().Equals("PRIORITY (OPTIONAL)", StringComparison.CurrentCultureIgnoreCase))
                     {
-                        if (worksheet.Cells[row, col].Value is null) continue;
-                        string playerName = worksheet.Cells[row, 1].GetValue<string>();
-                        string partName = worksheet.Cells[row, col].GetValue<string>();
-                        int priority = hasPriority && worksheet.Cells[row,2].Value is not null ? worksheet.Cells[row, 2].GetValue<int>() : Int32.MaxValue;
-                        pieceToAdd.Assignments.Add(new Assignment(playerName, partName, priority));
+                        hasPriority = true;
+                        col++;
                     }
-                    importedPieces.Add(pieceToAdd);
-                }
+                    while (col + 1 <= worksheet.Columns.Count())
+                    {
+                        col++;
+                        Piece pieceToAdd = new Piece();
+                        pieceToAdd.Name = (string)worksheet.Cells[1, col].Value;
+                        for (int row = 2; row <= worksheet.Rows.Count(); row++)
+                        {
+                            if (worksheet.Cells[row, col].Value is null) continue;
+                            string playerName = worksheet.Cells[row, 1].GetValue<string>();
+                            string partName = worksheet.Cells[row, col].GetValue<string>();
+                            int priority = hasPriority && worksheet.Cells[row, 2].Value is not null ? worksheet.Cells[row, 2].GetValue<int>() : Int32.MaxValue;
+                            pieceToAdd.Assignments.Add(new Assignment(playerName, partName, priority));
+                        }
+                        importedPieces.Add(pieceToAdd);
+                    }
 
-                ExcelWorksheet? scoreOrderWorksheet = package.Workbook.Worksheets
-                        .Where(w => w.Name.Trim().Replace(" ", string.Empty).Equals("SCOREORDER", StringComparison.CurrentCultureIgnoreCase))
-                        .FirstOrDefault();
-                if (scoreOrderWorksheet is not null)
-                {
-                    scoreOrder = new();
-                    for (int row = 1; row <= scoreOrderWorksheet.Rows.Count(); row++)
+                    ExcelWorksheet? scoreOrderWorksheet = package.Workbook.Worksheets
+                            .Where(w => w.Name.Trim().Replace(" ", string.Empty).Equals("SCOREORDER", StringComparison.CurrentCultureIgnoreCase))
+                            .FirstOrDefault();
+                    if (scoreOrderWorksheet is not null)
                     {
-                        scoreOrder.Add(scoreOrderWorksheet.Cells[row, 1].GetValue<string>());
+                        scoreOrder = new();
+                        for (int row = 1; row <= scoreOrderWorksheet.Rows.Count(); row++)
+                        {
+                            scoreOrder.Add(scoreOrderWorksheet.Cells[row, 1].GetValue<string>());
+                        }
                     }
                 }
+            }
+            catch (FileNotFoundException)
+            {
+                importedPieces.Clear();
+                System.Windows.MessageBox.Show("The selected file could not be found.", "File Error");
+            }
+            catch (InvalidOperationException ex) when (ex.Message.Contains("Worksheets"))
+            {
+                importedPieces.Clear();
+                System.Windows.MessageBox.Show("The file does not contain any worksheets or has an invalid structure.", "File Format Error");
+            }
+            catch (InvalidCastException)
+            {
+                importedPieces.Clear();
+                System.Windows.MessageBox.Show("The file contains invalid data types. Ensure all required columns are properly formatted - try using a template to start with.", "Data Format Error");
+            }
+            catch (Exception ex)
+            {
+                importedPieces.Clear();
+                System.Windows.MessageBox.Show($"An error occurred while parsing the file: {ex.Message}", "Parse Error");
             }
         }
 
@@ -180,70 +204,77 @@ namespace SeatingHelper
 
             foreach (Piece piece in importedPieces)
             {
-                SeatingCalculator seatingCalculator = new SeatingCalculator(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0);
-                if (scoreOrder is not null) seatingCalculator.ScoreOrder = scoreOrder;
-                bool blockSuccess, straightSuccess;
-                if (tryBlockFirst.IsChecked == true)
+                try
                 {
-                    blockSuccess = seatingCalculator.TryBlockPieceSeating(out Assignment[][] blockSeating);
-                    if (blockSuccess)
+                    SeatingCalculator seatingCalculator = new SeatingCalculator(piece, numRows.Value ?? 0, maxRowWidth.Value ?? 0);
+                    if (scoreOrder is not null) seatingCalculator.ScoreOrder = scoreOrder;
+                    bool blockSuccess, straightSuccess;
+                    if (tryBlockFirst.IsChecked == true)
                     {
-                        seatingCharts.Add(blockSeating);
-                        PopulateListView(blockSeating, piece.Name);
-                        continue;
+                        blockSuccess = seatingCalculator.TryBlockPieceSeating(out Assignment[][] blockSeating);
+                        if (blockSuccess)
+                        {
+                            seatingCharts.Add(blockSeating);
+                            PopulateListView(blockSeating, piece.Name);
+                            continue;
+                        }
+                        else if (blockSeating.Length > numRows.Value) // if overflow, try to condense block
+                        {
+                            blockSeating = seatingCalculator.CondenseRows(blockSeating);
+                            seatingCharts.Add(blockSeating);
+                            PopulateListView(blockSeating, piece.Name);
+                            continue;
+                        }
+                        straightSuccess = seatingCalculator.TryLongerRowsPieceSeating(out Assignment[][] straightSeating);
+                        if (straightSuccess)
+                        {
+                            seatingCharts.Add(straightSeating);
+                            PopulateListView(straightSeating, piece.Name);
+                            continue;
+                        }
+                        else if (straightSeating.Length > numRows.Value) // if overflow, try to condense block
+                        {
+                            straightSeating = seatingCalculator.CondenseRows(straightSeating);
+                            seatingCharts.Add(straightSeating);
+                            PopulateListView(straightSeating, piece.Name);
+                            continue;
+                        }
                     }
-                    else if (blockSeating.Length > numRows.Value) // if overflow, try to condense block
+                    else
                     {
-                        blockSeating = seatingCalculator.CondenseRows(blockSeating);
-                        seatingCharts.Add(blockSeating);
-                        PopulateListView(blockSeating, piece.Name);
-                        continue;
-                    }
-                    straightSuccess = seatingCalculator.TryLongerRowsPieceSeating(out Assignment[][] straightSeating);
-                    if (straightSuccess)
-                    {
-                        seatingCharts.Add(straightSeating);
-                        PopulateListView(straightSeating, piece.Name);
-                        continue;
-                    }
-                    else if (straightSeating.Length > numRows.Value) // if overflow, try to condense block
-                    {
-                        straightSeating = seatingCalculator.CondenseRows(straightSeating);
-                        seatingCharts.Add(straightSeating);
-                        PopulateListView(straightSeating, piece.Name);
-                        continue;
+                        straightSuccess = seatingCalculator.TryLongerRowsPieceSeating(out Assignment[][] straightSeating);
+                        if (straightSuccess)
+                        {
+                            seatingCharts.Add(straightSeating);
+                            PopulateListView(straightSeating, piece.Name);
+                            continue;
+                        }
+                        else if (straightSeating.Length > numRows.Value) // if overflow, try to condense block
+                        {
+                            straightSeating = seatingCalculator.CondenseRows(straightSeating);
+                            seatingCharts.Add(straightSeating);
+                            PopulateListView(straightSeating, piece.Name);
+                            continue;
+                        }
+                        blockSuccess = seatingCalculator.TryBlockPieceSeating(out Assignment[][] blockSeating);
+                        if (blockSuccess)
+                        {
+                            seatingCharts.Add(blockSeating);
+                            PopulateListView(blockSeating, piece.Name);
+                            continue;
+                        }
+                        else if (blockSeating.Length > numRows.Value) // if overflow, try to condense block
+                        {
+                            blockSeating = seatingCalculator.CondenseRows(blockSeating);
+                            seatingCharts.Add(blockSeating);
+                            PopulateListView(blockSeating, piece.Name);
+                            continue;
+                        }
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    straightSuccess = seatingCalculator.TryLongerRowsPieceSeating(out Assignment[][] straightSeating);
-                    if (straightSuccess)
-                    {
-                        seatingCharts.Add(straightSeating);
-                        PopulateListView(straightSeating, piece.Name);
-                        continue;
-                    }
-                    else if (straightSeating.Length > numRows.Value) // if overflow, try to condense block
-                    {
-                        straightSeating = seatingCalculator.CondenseRows(straightSeating);
-                        seatingCharts.Add(straightSeating);
-                        PopulateListView(straightSeating, piece.Name);
-                        continue;
-                    }
-                    blockSuccess = seatingCalculator.TryBlockPieceSeating(out Assignment[][] blockSeating);
-                    if (blockSuccess)
-                    {
-                        seatingCharts.Add(blockSeating);
-                        PopulateListView(blockSeating, piece.Name);
-                        continue;
-                    }
-                    else if (blockSeating.Length > numRows.Value) // if overflow, try to condense block
-                    {
-                        blockSeating = seatingCalculator.CondenseRows(blockSeating);
-                        seatingCharts.Add(blockSeating);
-                        PopulateListView(blockSeating, piece.Name);
-                        continue;
-                    }
+                    System.Windows.MessageBox.Show($"Failed to generate seating for '{piece.Name}': {ex.Message}", "Generation Error");
                 }
             }
             chartsList.ItemsSource = chartListViewItems;
