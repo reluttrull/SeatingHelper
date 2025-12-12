@@ -81,11 +81,12 @@ namespace SeatingHelper
                 {
                     System.Windows.MessageBox.Show("Problem saving changes. Try starting with a new import.");
                     return null;
-                }// todo: error handling
-                seatingCharts[index] = new Assignment[chartDisplayWindow.SeatingChart.Count][];
-                for (int i = 0; i < chartDisplayWindow.SeatingChart.Count; i++)
+                }
+                List<DisplayRow> nonEmptyRows = [..chartDisplayWindow.SeatingChart.Where(row => row.InnerList.Count > 0)];
+                seatingCharts[index] = new Assignment[nonEmptyRows.Count][];
+                for (int i = 0; i < nonEmptyRows.Count; i++)
                 {
-                    seatingCharts[index][i] = [.. chartDisplayWindow.SeatingChart[i].InnerList];
+                    seatingCharts[index][i] = [.. nonEmptyRows[i].InnerList];
                 }
                 return seatingCharts[index];
             }
@@ -192,6 +193,8 @@ namespace SeatingHelper
                 if (changedChart is not null)
                 {
                     chartItem.Chart = changedChart;
+                    chartItem.Rows = changedChart.Length;
+                    chartItem.Players = changedChart.Sum(row => row.Length);
                     System.Windows.MessageBox.Show("Changes saved.");
                 }
             }
