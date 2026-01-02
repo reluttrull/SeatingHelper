@@ -3,8 +3,15 @@
 A tool to optimize your musical ensemble seating charts - great for variably-sized ensembles with variable instrumentation!
 
 <figure>
-  <img width="1477" height="667" alt="Screenshot 2025-12-01 094153" src="https://github.com/user-attachments/assets/8d6183d7-d89e-4717-94a5-7886a5be54fc" />
-  <figcaption>New window</figcaption>
+  <img width="1479" height="664" alt="Screenshot 2026-01-02 112842" src="https://github.com/user-attachments/assets/59e00c98-1f95-4ba5-9879-318996aca6fa" />
+  <figcaption>Startup window</figcaption>
+</figure>
+<br />
+<hr />
+<br />
+<figure>
+  <img width="1178" height="669" alt="Screenshot 2026-01-02 112919" src="https://github.com/user-attachments/assets/42cdc613-8ffc-4dcd-890d-ed95c25b1c38" />
+  <figcaption>Template selection</figcaption>
 </figure>
 <br />
 <hr />
@@ -17,28 +24,32 @@ A tool to optimize your musical ensemble seating charts - great for variably-siz
 <hr />
 <br />
 <figure>
-  <img width="1478" height="667" alt="Screenshot 2025-12-01 094613" src="https://github.com/user-attachments/assets/2c2854dc-d9c3-4b99-a6a4-a8002ef8e877" />
+  <img width="1477" height="662" alt="Screenshot 2026-01-02 113708" src="https://github.com/user-attachments/assets/d9563c3a-c745-4d00-8b15-6ecf8414d54b" />
   <figcaption>After importing</figcaption>
 </figure>
 <br />
 <hr />
 <br />
-<figure>
-  <img width="1480" height="670" alt="Screenshot 2025-12-01 094631" src="https://github.com/user-attachments/assets/ae2bf22b-a30a-47ac-bf21-1163fd986ccc" />
+<figure><img width="1476" height="665" alt="Screenshot 2026-01-02 113037" src="https://github.com/user-attachments/assets/603773e5-f7d3-42ec-bf2e-f9bb5daac4aa" />
   <figcaption>After generating charts</figcaption>
 </figure>
 <br />
 <hr />
 <br />
-<figure>
-<img width="1547" height="736" alt="Screenshot 2025-12-01 094721" src="https://github.com/user-attachments/assets/97c48d69-f1d3-4637-b8a3-e5f35092c8fe" />
+<figure><img width="1590" height="731" alt="Screenshot 2026-01-02 113144" src="https://github.com/user-attachments/assets/d0eeffa5-4026-4898-b262-27fc7ba3dfb0" />
   <figcaption>Seating chart preview</figcaption>
 </figure>
 <br />
 <hr />
 <br />
 <figure>
-  <img width="875" height="669" alt="Screenshot 2025-12-01 095013" src="https://github.com/user-attachments/assets/c31b09eb-b6a4-4b08-9e4b-dd56cb8d691a" />
+  <img width="1591" height="739" alt="Screenshot 2026-01-02 113218" src="https://github.com/user-attachments/assets/404e3d75-d0bd-4d68-8910-2d2a7c1f0ca3" />
+  <figcaption>Seating chart preview - rearranging manually</figcaption>
+</figure>
+<br />
+<hr />
+<br />
+<figure><img width="966" height="704" alt="Screenshot 2026-01-02 113441" src="https://github.com/user-attachments/assets/e4b9b917-3054-4759-aac4-0cd328c57b85" />
   <figcaption>Exported seating charts</figcaption>
 </figure>
 <br />
